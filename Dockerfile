@@ -11,8 +11,9 @@ RUN apk add --no-cache bash
 
 COPY . .
 
+ENV PORT 8081
+
 RUN go build -o /docker-gs-ping ./cmd/api
 
-EXPOSE 8080
 
 CMD [ "/docker-gs-ping" ]
