@@ -1,9 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"github.com/ditointernet/tradulab-service/internal/rest"
+)
 
 func main() {
+	server := MustNewServer()
 
-	fmt.Println("Hello Tradulab.")
+	router := server.Listen()
+	rPhrase := rest.MustNewPhrase()
 
+	router.GET("/:id", rPhrase.FindByID)
+
+	router.Run()
 }
