@@ -1,13 +1,16 @@
 version: '3'
 services:
-  app:
-    container_name: tradulab-service
-    build: .
-    ports: 8081:8081
-    depends_on: 
-      - db-postgres
-      
-  db-postgres:
+  database:
     image: postgres:9.6-stretch
     environment:
-    POSTGRES_PASSWORD: abacate
+      POSTGRES_PASSWORD: abacate
+  
+  web:
+    build: .
+    ports:
+      - "8081:8081"
+    depends_on: 
+      - database
+    links:
+      - database
+  
