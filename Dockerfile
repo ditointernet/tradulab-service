@@ -7,8 +7,6 @@ COPY go.sum ./
 
 RUN go mod download
 
-RUN apk add --no-cache bash
-
 COPY . .
 
 ENV PORT 8081
