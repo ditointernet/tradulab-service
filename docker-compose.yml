@@ -4,13 +4,14 @@ services:
     image: postgres:9.6-stretch
     environment:
       POSTGRES_PASSWORD: abacate
-  
+
   web:
     build: .
+    command: "go run ./cmd/api"
+    volumes:
+      - .:/app
     ports:
       - "8081:8081"
-    depends_on: 
-      - database
     links:
       - database
   

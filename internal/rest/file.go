@@ -1,9 +1,6 @@
 package rest
 
 import (
-	"net/http"
-
-	"github.com/ditointernet/tradulab-service/drivers"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/gin-gonic/gin"
 )
@@ -17,10 +14,18 @@ func MustNewFile() File {
 
 func (f File) CreateFile(ctx *gin.Context) {
 
-	var i services.File = services.Path{"file.csv"}
-	i.CheckFile()
+	var checker services.File = services.Path{P: "file.csv"}
+	_, err := checker.CheckFile()
 
-	ctx.JSON(http.StatusOK, drivers.File{ID: i.ID, ProjectID: i.ProjectID, FilePath: i.FilePath})
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	ctx.JSON(200, gin.H{
+		"message": "Upload complete",
+	})
 
 	/*form, _ := ctx.MultipartForm()
 	files := form.File["upload[]"]

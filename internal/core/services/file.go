@@ -1,26 +1,29 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/ditointernet/tradulab-service/drivers"
 	"github.com/google/uuid"
 )
 
-func (file Path) CheckFile() bool {
-	dto := drivers.File{}
+func (file Path) CheckFile() (drivers.File, error) {
 
-	extenssion := file[len(file)-4:]
+	extenssion := file.P[len(file.P)-4:]
 
 	if extenssion != ".csv" {
-		return false
+		return drivers.File{}, errors.New("file not supported. Must be .csv")
 	}
 
 	id := uuid.New().String()
+	projectId := uuid.New().String()
+	dto := drivers.File{ID: id, ProjectID: projectId, FilePath: file.P}
 
-	return true
+	return dto, nil
 }
 
 type File interface {
-	CheckFile() bool
+	CheckFile() (drivers.File, error)
 }
 
 type Path struct {
