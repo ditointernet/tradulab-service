@@ -1,6 +1,7 @@
 package domain
 
 type File struct {
+	ID        string
 	ProjectID string
 	FilePath  string
 }
