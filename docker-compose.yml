@@ -1,0 +1,20 @@
+version: '3'
+services:
+  database:
+    image: postgres:9.6-stretch
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: "8000:8000"
+
+  web:
+    build: .
+    command: "go run ./cmd/api"
+    volumes:
+      - .:/app
+    ports:
+      - "8081:8081"
+    links:
+      - database
+  
