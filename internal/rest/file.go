@@ -1,30 +1,57 @@
 package rest
 
 import (
+	"fmt"
+	"net/http"
+
+	"github.com/ditointernet/tradulab-service/drivers"
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/gin-gonic/gin"
 )
 
-type File struct {
+type ServiceInput struct {
+	File services.FileHandler
 }
 
-func MustNewFile() File {
-	return File{}
+type File struct {
+	in ServiceInput
+}
+
+func MustNewFile(in ServiceInput) (*File, error) {
+	if in.File == nil {
+		return nil, fmt.Errorf("Error message...")
+	}
+
+	return &File{in: in}, nil
 }
 
 func (f File) CreateFile(ctx *gin.Context) {
 
-	var checker services.File = services.Path{P: "file.csv"}
-	_, err := checker.CheckFile()
-
+	body := &drivers.File{}
+	err := ctx.ShouldBindJSON(body)
 	if err != nil {
-		ctx.JSON(400, gin.H{
+		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
+		return
+	}
+	err = f.in.File.CheckFile(body)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 
-	ctx.JSON(200, gin.H{
+	file := domain.File{
+		ProjectID: body.ProjectID,
+		FilePath:  body.FilePath,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Upload complete",
+		"file":    file,
 	})
 
 	/*form, _ := ctx.MultipartForm()
