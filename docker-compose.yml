@@ -7,7 +7,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports: 
-      - "8000:8000"
+      - "5032:5032"
+    volumes:
+      - .:/app/postgressql
     
   web:
     build: .
@@ -15,7 +17,6 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8081:8081"
+      - "8080:8080"
     links:
       - database
-  
