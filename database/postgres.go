@@ -18,7 +18,7 @@ func MustNewDB() Database {
 }
 
 func (d *Database) StartPostgres() {
-	dns := "host=localhost port=25430 user=admin dbname=books sslmode=disable password=123456"
+	dns := "host=database port=5432 user=admin dbname=tradulab sslmode=disable password=123456"
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
