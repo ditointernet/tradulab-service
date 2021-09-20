@@ -36,6 +36,15 @@ func (f File) CreateFile(ctx *gin.Context) {
 		})
 		return
 	}
+
+	err = f.in.File.SaveFile(body)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	err = f.in.File.CheckFile(body)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
