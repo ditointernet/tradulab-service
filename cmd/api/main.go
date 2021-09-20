@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ditointernet/tradulab-service/database"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/ditointernet/tradulab-service/internal/rest"
 )
@@ -17,6 +18,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	db := database.MustNewDB()
+
+	db.StartPostgres()
 
 	router.GET("/:id", rPhrase.FindByID)
 	router.POST("/file", rFile.CreateFile)
