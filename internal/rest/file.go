@@ -36,17 +36,17 @@ func (f File) CreateFile(ctx *gin.Context) {
 		})
 		return
 	}
-	err = f.in.File.CheckFile(body)
+
+	file := &domain.File{
+		ProjectID: body.ProjectID,
+		FilePath:  body.FilePath,
+	}
+	err = f.in.File.CheckFile(file)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
-	}
-
-	file := domain.File{
-		ProjectID: body.ProjectID,
-		FilePath:  body.FilePath,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{

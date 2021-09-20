@@ -4,11 +4,11 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/ditointernet/tradulab-service/drivers"
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
 )
 
 type FileHandler interface {
-	CheckFile(*drivers.File) error
+	CheckFile(*domain.File) error
 }
 type File struct {
 }
@@ -17,7 +17,7 @@ func MustNewFile() *File {
 	return &File{}
 }
 
-func (f File) CheckFile(entry *drivers.File) error {
+func (f File) CheckFile(entry *domain.File) error {
 
 	extension := filepath.Ext(entry.FilePath)
 	if extension != ".csv" {
