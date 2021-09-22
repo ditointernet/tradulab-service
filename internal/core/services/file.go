@@ -31,6 +31,7 @@ func (f File) CheckFile(entry *drivers.File) error {
 	return nil
 }
 
+// corrigir pra camada de domain
 func (f *File) SaveFile(*drivers.File) error {
 	content := &drivers.File{}
 	content.ID = uuid.New().String()

@@ -3,13 +3,11 @@ services:
   database:
     image: postgres:9.6-stretch
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: tradulab
     ports: 
-      - "5032:5032"
-    volumes:
-      - .:/app/postgressql
+      - "5032:5432"
     
   web:
     build: .
@@ -18,5 +16,13 @@ services:
       - .:/app
     ports:
       - "8080:8080"
+    links:
+      - database
+    
+  migrate:
+    build: .
+    command: "go run ./cmd/migrate"
+    volumes:
+      - .:/app
     links:
       - database
