@@ -31,7 +31,7 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 
 func (d *Database) StartPostgres() *gorm.DB {
 	// colocar em variavel de ambiente
-	dns := "host=database user=admin password=12345 dbname=tradulab port=5032 sslmode=disable"
+	dns := "host=tradulab-db user=admin password=12345 dbname=tradulab port=5432 sslmode=disable"
 	// connString := "postgres://admin:12345@tcp(database:5032)/tradulab"
 
 	// database, err := gorm.Open(postgres.New(postgres.Config{

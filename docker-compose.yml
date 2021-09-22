@@ -1,13 +1,15 @@
 version: '3'
 services:
-  database:
+  tradulab-db:
     image: postgres:9.6-stretch
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: 12345
       POSTGRES_DB: tradulab
     ports: 
-      - "5032:5432"
+      - "5432:5432"
+    networks:
+      tradulab-network: {}
     
   web:
     build: .
@@ -16,13 +18,23 @@ services:
       - .:/app
     ports:
       - "8080:8080"
-    links:
-      - database
+    depends_on:
+      - tradulab-db
+    networks:
+      tradulab-network: {}
+
     
   migrate:
     build: .
     command: "go run ./cmd/migrate"
     volumes:
       - .:/app
-    links:
-      - database
+    depends_on:
+      - tradulab-db
+    networks:
+      tradulab-network: {}
+
+networks:
+  tradulab-network:
+    name: tradulab-network
+    external: false
