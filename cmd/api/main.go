@@ -8,7 +8,10 @@ import (
 
 func main() {
 	server := MustNewServer()
-	fService := services.MustNewFile()
+	db := database.MustNewDB()
+
+	db.StartPostgres()
+	fService := services.MustNewFile(db)
 
 	router := server.Listen()
 	rPhrase := rest.MustNewPhrase()
@@ -18,10 +21,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	db := database.MustNewDB()
-
-	db.StartPostgres()
 
 	router.GET("/:id", rPhrase.FindByID)
 	router.POST("/file", rFile.CreateFile)

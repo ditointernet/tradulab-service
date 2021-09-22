@@ -20,7 +20,7 @@ func MustNewDB() Database {
 }
 
 func (d *Database) AutoMigration(arg ...interface{}) error {
-	err := d.db.AutoMigrate(arg)
+	err := d.db.AutoMigrate(arg...)
 
 	if err != nil {
 		return errors.Wrap(err, "Couldnt migrate database structs")
@@ -32,13 +32,7 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 func (d *Database) StartPostgres() *gorm.DB {
 	// colocar em variavel de ambiente
 	dns := "host=tradulab-db user=admin password=12345 dbname=tradulab port=5432 sslmode=disable"
-	// connString := "postgres://admin:12345@tcp(database:5032)/tradulab"
 
-	// database, err := gorm.Open(postgres.New(postgres.Config{
-
-	// 	DSN:                  connString,
-	// 	PreferSimpleProtocol: false,
-	// }), &gorm.Config{})
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
 		fmt.Println("Could not connect to the Postgres Database")
@@ -57,19 +51,19 @@ func (d *Database) GetDatabase() *gorm.DB {
 	return d.db
 }
 
+// mudar para domains vai vir do database agr
 func (d *Database) SaveFile(file *drivers.File) error {
 	db := d.GetDatabase()
 
 	fmt.Println(db, "-------------------")
 
-	fmt.Println("-----------AAAAA-------", db)
-	return db.Raw(
-		"INSERT into files (ID, ProjectID, FilePath) values (?,?,?)",
+	fmt.Println(file.ID)
+	query := db.Exec(
+		"INSERT into files (id, project_id, file_path) values (?,?,?)",
 		file.ID,
 		file.ProjectID,
 		file.FilePath,
-	).Error
+	)
 
-	// stmt.Exec(file.ID, file.ProjectID, file.ProjectID)
-
+	return query.Error
 }

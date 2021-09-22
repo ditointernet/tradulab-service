@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
 
 	"github.com/ditointernet/tradulab-service/database"
@@ -17,8 +18,8 @@ type File struct {
 	repo database.Database
 }
 
-func MustNewFile() *File {
-	return &File{}
+func MustNewFile(repo database.Database) *File {
+	return &File{repo: repo}
 }
 
 func (f File) CheckFile(entry *drivers.File) error {
@@ -36,7 +37,11 @@ func (f *File) SaveFile(*drivers.File) error {
 	content := &drivers.File{}
 	content.ID = uuid.New().String()
 
-	f.repo.SaveFile(content)
+	err := f.repo.SaveFile(content)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	return nil
 }
