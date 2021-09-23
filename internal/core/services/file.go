@@ -6,14 +6,13 @@ import (
 	"path/filepath"
 
 	"github.com/ditointernet/tradulab-service/database"
-	"github.com/ditointernet/tradulab-service/drivers"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/google/uuid"
 )
 
 type FileHandler interface {
 	CheckFile(*domain.File) error
-	SaveFile(*drivers.File) error
+	SaveFile(*domain.File) error
 }
 type File struct {
 	repo database.Database
@@ -34,9 +33,10 @@ func (f File) CheckFile(entry *domain.File) error {
 }
 
 // corrigir pra camada de domain
-func (f *File) SaveFile(*drivers.File) error {
-	content := &drivers.File{}
-	content.ID = uuid.New().String()
+func (f *File) SaveFile(entry *domain.File) error {
+	content := &domain.File{
+		ID: uuid.New().String(),
+	}
 
 	err := f.repo.SaveFile(content)
 

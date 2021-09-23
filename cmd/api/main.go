@@ -15,7 +15,7 @@ func main() {
 
 	router := server.Listen()
 	rPhrase := rest.MustNewPhrase()
-	rFile, err := rest.MustNewFile(rest.ServiceInput{
+	rFile, err := rest.NewFile(rest.ServiceInput{
 		File: fService,
 	})
 	if err != nil {

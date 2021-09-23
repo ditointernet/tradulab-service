@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ditointernet/tradulab-service/drivers"
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
@@ -52,7 +52,7 @@ func (d *Database) GetDatabase() *gorm.DB {
 }
 
 // mudar para domains vai vir do database agr
-func (d *Database) SaveFile(file *drivers.File) error {
+func (d *Database) SaveFile(file *domain.File) error {
 	db := d.GetDatabase()
 
 	fmt.Println(db, "-------------------")
