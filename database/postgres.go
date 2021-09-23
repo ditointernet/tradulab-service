@@ -3,10 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/ditointernet/tradulab-service/drivers"
-	"github.com/joho/godotenv"
 
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
@@ -31,24 +29,17 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 	return nil
 }
 
-func goDotEnvVariable(key string) string {
-
-	// load .env file
-	err := godotenv.Load(".env")
-
+func (d *Database) StartPostgres() *gorm.DB {
+	env, err := GoDotEnvVariable()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		fmt.Println("error when getting the environment variables")
 	}
 
-	return os.Getenv(key)
-}
-
-func (d *Database) StartPostgres() *gorm.DB {
-	user := goDotEnvVariable("POSTGRES_USER")
-	host := goDotEnvVariable("HOST")
-	password := goDotEnvVariable("POSTGRES_PASSWORD")
-	dbName := goDotEnvVariable("POSTGRES_DB")
-	port := goDotEnvVariable("PORT_POSTGRES")
+	user := env.User
+	host := env.Host
+	password := env.Password
+	dbName := env.DbName
+	port := env.Port
 
 	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
 
