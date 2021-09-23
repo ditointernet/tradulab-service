@@ -18,7 +18,7 @@ type File struct {
 	in ServiceInput
 }
 
-func MustNewFile(in ServiceInput) (*File, error) {
+func NewFile(in ServiceInput) (*File, error) {
 	if in.File == nil {
 		return nil, fmt.Errorf("Error message...")
 	}
