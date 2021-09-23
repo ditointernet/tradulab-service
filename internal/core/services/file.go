@@ -7,11 +7,12 @@ import (
 
 	"github.com/ditointernet/tradulab-service/database"
 	"github.com/ditointernet/tradulab-service/drivers"
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/google/uuid"
 )
 
 type FileHandler interface {
-	CheckFile(*drivers.File) error
+	CheckFile(*domain.File) error
 	SaveFile(*drivers.File) error
 }
 type File struct {
@@ -22,7 +23,7 @@ func MustNewFile(repo database.Database) *File {
 	return &File{repo: repo}
 }
 
-func (f File) CheckFile(entry *drivers.File) error {
+func (f File) CheckFile(entry *domain.File) error {
 
 	extension := filepath.Ext(entry.FilePath)
 	if extension != ".csv" {
