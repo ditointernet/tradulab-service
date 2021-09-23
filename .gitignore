@@ -13,3 +13,13 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+#intellij
+.idea
+*.iml
+
+#vscode
+.vscode/
+
+#env
+.env

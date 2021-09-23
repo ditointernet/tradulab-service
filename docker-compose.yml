@@ -1,0 +1,16 @@
+version: '3'
+services:
+  database:
+    image: postgres:9.6-stretch
+    environment:
+      POSTGRES_PASSWORD: abacate
+
+  web:
+    build: .
+    command: "go run ./cmd/api"
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    links:
+      - database
