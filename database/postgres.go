@@ -7,7 +7,7 @@ import (
 
 	"github.com/ditointernet/tradulab-service/drivers"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
+
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -48,7 +48,7 @@ func (d *Database) StartPostgres() *gorm.DB {
 	host := goDotEnvVariable("HOST")
 	password := goDotEnvVariable("POSTGRES_PASSWORD")
 	dbName := goDotEnvVariable("POSTGRES_DB")
-	port := goDotEnvVariable("PORT")
+	port := goDotEnvVariable("PORT_POSTGRES")
 
 	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
 
