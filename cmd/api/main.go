@@ -14,7 +14,6 @@ func main() {
 	fService := services.MustNewFile(db)
 
 	router := server.Listen()
-	rPhrase := rest.MustNewPhrase()
 	rFile, err := rest.MustNewFile(rest.ServiceInput{
 		File: fService,
 	})
@@ -22,6 +21,9 @@ func main() {
 		panic(err)
 	}
 
+	// phrase := services.Phrase{}
+	phrase := services.PhraseBackward{}
+	rPhrase := rest.MustNewPhrase(&phrase)
 	router.GET("/:id", rPhrase.FindByID)
 	router.POST("/file", rFile.CreateFile)
 
