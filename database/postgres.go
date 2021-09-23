@@ -3,8 +3,10 @@ package database
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
@@ -29,9 +31,26 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 	return nil
 }
 
+func goDotEnvVariable(key string) string {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return os.Getenv(key)
+}
+
 func (d *Database) StartPostgres() *gorm.DB {
-	// colocar em variavel de ambiente
-	dns := "host=tradulab-db user=admin password=12345 dbname=tradulab port=5432 sslmode=disable"
+	user := goDotEnvVariable("POSTGRES_USER")
+	host := goDotEnvVariable("HOST")
+	password := goDotEnvVariable("POSTGRES_PASSWORD")
+	dbName := goDotEnvVariable("POSTGRES_DB")
+	port := goDotEnvVariable("PORT")
+
+	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
