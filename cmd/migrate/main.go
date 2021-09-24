@@ -1,20 +1,20 @@
 package main
 
-import (
-	"github.com/ditointernet/tradulab-service/database"
-)
+// import (
+// 	"github.com/ditointernet/tradulab-service/database"
+// )
 
-func main() {
-	db := database.MustNewDB()
+// func main() {
+// 	db := database.MustNewDB()
 
-	tables := &database.File{}
+// 	tables := &database.File{}
 
-	db.StartPostgres()
+// 	db.StartPostgres()
 
-	err := db.AutoMigration(tables)
+// 	err := db.AutoMigration(tables)
 
-	if err != nil {
-		panic(err)
-	}
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-}
+// }

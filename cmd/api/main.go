@@ -37,14 +37,13 @@ func GoDotEnvVariable() (*config, error) {
 }
 
 func main() {
-
 	env, err := GoDotEnvVariable()
 	if err != nil {
 		fmt.Println("Error during environment variables build", err.Error())
 		return
 	}
 
-	postgres := database.NewConfig(&database.ConfigDB{
+	db := database.MustNewDB(&database.ConfigDB{
 		User:     env.user,
 		Host:     env.host,
 		Password: env.password,
@@ -52,12 +51,18 @@ func main() {
 		Port:     env.port,
 	})
 
-	server := MustNewServer()
-
-	db := database.MustNewDB()
 	db.StartPostgres()
+
+	// migration
+	tables := &database.File{}
+	err = db.AutoMigration(tables)
+	if err != nil {
+		panic(err)
+	}
+
 	fService := services.MustNewFile(db)
 
+	server := MustNewServer()
 	router := server.Listen()
 	rPhrase := rest.MustNewPhrase()
 	rFile, err := rest.MustNewFile(rest.ServiceInput{
