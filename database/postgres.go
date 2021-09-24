@@ -11,12 +11,27 @@ import (
 	"gorm.io/gorm"
 )
 
+type ConfigDB struct {
+	User     string
+	Host     string
+	Password string
+	DbName   string
+	Port     string
+}
+
 type Database struct {
 	db *gorm.DB
+	in *ConfigDB
 }
 
 func MustNewDB() Database {
 	return Database{}
+}
+
+func NewConfig(in *ConfigDB) *Database {
+	return &Database{
+		in: in,
+	}
 }
 
 func (d *Database) AutoMigration(arg ...interface{}) error {
@@ -30,17 +45,17 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 }
 
 func (d *Database) StartPostgres() {
-	env, err := GoDotEnvVariable()
-	if err != nil {
-		fmt.Println("error when getting the environment variables")
-		return
-	}
+	// env, err := GoDotEnvVariable()
+	// if err != nil {
+	// 	fmt.Println("error when getting the environment variables")
+	// 	return
+	// }
 
-	host := env.Host
-	user := env.User
-	password := env.Password
-	dbName := env.DbName
-	port := env.Port
+	// host = ConfigDB.Host
+	// user = ConfigDB.User
+	// password = ConfigDB.Password
+	// dbName = ConfigDB.DbName
+	// port := ConfigDB.Port
 
 	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbName, port)
 
