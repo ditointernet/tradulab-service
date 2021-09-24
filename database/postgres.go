@@ -29,19 +29,20 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 	return nil
 }
 
-func (d *Database) StartPostgres() *gorm.DB {
+func (d *Database) StartPostgres() {
 	env, err := GoDotEnvVariable()
 	if err != nil {
 		fmt.Println("error when getting the environment variables")
+		return
 	}
 
-	user := env.User
 	host := env.Host
+	user := env.User
 	password := env.Password
 	dbName := env.DbName
 	port := env.Port
 
-	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
+	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbName, port)
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
@@ -50,11 +51,6 @@ func (d *Database) StartPostgres() *gorm.DB {
 	}
 
 	d.db = database
-
-	fmt.Println(d.db, "------------------")
-
-	return nil
-
 }
 
 func (d *Database) GetDatabase() *gorm.DB {
@@ -65,9 +61,6 @@ func (d *Database) GetDatabase() *gorm.DB {
 func (d *Database) SaveFile(file *drivers.File) error {
 	db := d.GetDatabase()
 
-	fmt.Println(db, "-------------------")
-
-	fmt.Println(file.ID)
 	query := db.Exec(
 		"INSERT into files (id, project_id, file_path) values (?,?,?)",
 		file.ID,
