@@ -48,7 +48,7 @@ func (d *Database) StartPostgres() *gorm.DB {
 	host := goDotEnvVariable("HOST")
 	password := goDotEnvVariable("POSTGRES_PASSWORD")
 	dbName := goDotEnvVariable("POSTGRES_DB")
-	port := goDotEnvVariable("PORT")
+	port := goDotEnvVariable("PORTPOSTGRES")
 
 	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
 
