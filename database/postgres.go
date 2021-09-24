@@ -3,22 +3,31 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/ditointernet/tradulab-service/drivers"
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
+
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type Database struct {
-	db *gorm.DB
+type ConfigDB struct {
+	User     string
+	Host     string
+	Password string
+	DbName   string
+	Port     string
 }
 
-func MustNewDB() Database {
-	return Database{}
+type Database struct {
+	db *gorm.DB
+	in *ConfigDB
+}
+
+func NewConfig(in *ConfigDB) *Database {
+	return &Database{
+		in: in,
+	}
 }
 
 func (d *Database) AutoMigration(arg ...interface{}) error {
@@ -31,26 +40,9 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 	return nil
 }
 
-func goDotEnvVariable(key string) string {
+func (d *Database) StartPostgres() {
 
-	// load .env file
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
-
-func (d *Database) StartPostgres() *gorm.DB {
-	user := goDotEnvVariable("POSTGRES_USER")
-	host := goDotEnvVariable("HOST")
-	password := goDotEnvVariable("POSTGRES_PASSWORD")
-	dbName := goDotEnvVariable("POSTGRES_DB")
-	port := goDotEnvVariable("PORTPOSTGRES")
-
-	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
+	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", d.in.Host, d.in.User, d.in.Password, d.in.DbName, d.in.Port)
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
@@ -59,11 +51,6 @@ func (d *Database) StartPostgres() *gorm.DB {
 	}
 
 	d.db = database
-
-	fmt.Println(d.db, "------------------")
-
-	return nil
-
 }
 
 func (d *Database) GetDatabase() *gorm.DB {
@@ -71,12 +58,10 @@ func (d *Database) GetDatabase() *gorm.DB {
 }
 
 // mudar para domains vai vir do database agr
+//ver refatoração da query
 func (d *Database) SaveFile(file *drivers.File) error {
 	db := d.GetDatabase()
 
-	fmt.Println(db, "-------------------")
-
-	fmt.Println(file.ID)
 	query := db.Exec(
 		"INSERT into files (id, project_id, file_path) values (?,?,?)",
 		file.ID,
