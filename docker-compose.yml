@@ -18,6 +18,7 @@ services:
       - .:/app
     ports:
       - "8080:8080"
+<<<<<<< HEAD
     depends_on:
       - tradulab-db
     networks:
@@ -38,3 +39,7 @@ networks:
   tradulab-network:
     name: tradulab-network
     external: false
+=======
+    links:
+      - database
+>>>>>>> 0c2ce75d9159d15be58579d12c5d07fb2fdfbf62
