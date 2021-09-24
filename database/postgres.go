@@ -3,22 +3,36 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+type ConfigDB struct {
+	User     string
+	Host     string
+	Password string
+	DbName   string
+	Port     string
+}
+
 type Database struct {
 	db *gorm.DB
+	in *ConfigDB
 }
 
 func MustNewDB() Database {
 	return Database{}
+}
+
+func NewConfig(in *ConfigDB) *Database {
+	return &Database{
+		in: in,
+	}
 }
 
 func (d *Database) AutoMigration(arg ...interface{}) error {
@@ -31,26 +45,20 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 	return nil
 }
 
-func goDotEnvVariable(key string) string {
+func (d *Database) StartPostgres() {
+	// env, err := GoDotEnvVariable()
+	// if err != nil {
+	// 	fmt.Println("error when getting the environment variables")
+	// 	return
+	// }
 
-	// load .env file
-	err := godotenv.Load(".env")
+	// host = ConfigDB.Host
+	// user = ConfigDB.User
+	// password = ConfigDB.Password
+	// dbName = ConfigDB.DbName
+	// port := ConfigDB.Port
 
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
-
-func (d *Database) StartPostgres() *gorm.DB {
-	user := goDotEnvVariable("POSTGRES_USER")
-	host := goDotEnvVariable("HOST")
-	password := goDotEnvVariable("POSTGRES_PASSWORD")
-	dbName := goDotEnvVariable("POSTGRES_DB")
-	port := goDotEnvVariable("PORT")
-
-	dns := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbName + " port=" + port + " sslmode=disable"
+	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbName, port)
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
@@ -59,11 +67,6 @@ func (d *Database) StartPostgres() *gorm.DB {
 	}
 
 	d.db = database
-
-	fmt.Println(d.db, "------------------")
-
-	return nil
-
 }
 
 func (d *Database) GetDatabase() *gorm.DB {
@@ -74,9 +77,6 @@ func (d *Database) GetDatabase() *gorm.DB {
 func (d *Database) SaveFile(file *domain.File) error {
 	db := d.GetDatabase()
 
-	fmt.Println(db, "-------------------")
-
-	fmt.Println(file.ID)
 	query := db.Exec(
 		"INSERT into files (id, project_id, file_path) values (?,?,?)",
 		file.ID,
