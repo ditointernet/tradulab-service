@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
-	_ "github.com/lib/pq"
 
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
@@ -25,10 +24,6 @@ type Database struct {
 	in *ConfigDB
 }
 
-func MustNewDB() Database {
-	return Database{}
-}
-
 func NewConfig(in *ConfigDB) *Database {
 	return &Database{
 		in: in,
@@ -46,19 +41,8 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 }
 
 func (d *Database) StartPostgres() {
-	// env, err := GoDotEnvVariable()
-	// if err != nil {
-	// 	fmt.Println("error when getting the environment variables")
-	// 	return
-	// }
 
-	// host = ConfigDB.Host
-	// user = ConfigDB.User
-	// password = ConfigDB.Password
-	// dbName = ConfigDB.DbName
-	// port := ConfigDB.Port
-
-	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbName, port)
+	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", d.in.Host, d.in.User, d.in.Password, d.in.DbName, d.in.Port)
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
@@ -73,15 +57,21 @@ func (d *Database) GetDatabase() *gorm.DB {
 	return d.db
 }
 
-// mudar para domains vai vir do database agr
 func (d *Database) SaveFile(file *domain.File) error {
+
+	dto := &File{
+		ID:        file.ID,
+		ProjectID: file.ProjectID,
+		FilePath:  file.FilePath,
+	}
+
 	db := d.GetDatabase()
 
 	query := db.Exec(
 		"INSERT into files (id, project_id, file_path) values (?,?,?)",
-		file.ID,
-		file.ProjectID,
-		file.FilePath,
+		dto.ID,
+		dto.ProjectID,
+		dto.FilePath,
 	)
 
 	return query.Error
