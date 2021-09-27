@@ -37,17 +37,17 @@ func (f File) CreateFile(ctx *gin.Context) {
 		return
 	}
 
-	err = f.in.File.SaveFile(body)
+	file := &domain.File{
+		ProjectID: body.ProjectID,
+		FilePath:  body.FilePath,
+	}
+
+	err = f.in.File.SaveFile(file)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
-	}
-
-	file := &domain.File{
-		ProjectID: body.ProjectID,
-		FilePath:  body.FilePath,
 	}
 
 	err = f.in.File.CheckFile(file)
@@ -60,24 +60,5 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Upload complete",
-		"file":    file,
 	})
-
-	/*form, _ := ctx.MultipartForm()
-	files := form.File["upload[]"]
-
-	for _, file := range files {
-		body := &File{}
-		err := ctx.ShouldBindJSON(body)
-		if err != nil {
-			ctx.JSON(500, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		ctx.SaveUploadedFile(file, "/ports")
-		body.FilePath = "/ports/"
-	}
-
-	jsonValue, err := json.Marshal(body)*/
 }

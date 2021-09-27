@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ditointernet/tradulab-service/drivers"
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
 
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
@@ -57,16 +57,21 @@ func (d *Database) GetDatabase() *gorm.DB {
 	return d.db
 }
 
-// mudar para domains vai vir do database agr
-//ver refatoração da query
-func (d *Database) SaveFile(file *drivers.File) error {
+func (d *Database) SaveFile(file *domain.File) error {
+
+	dto := &File{
+		ID:        file.ID,
+		ProjectID: file.ProjectID,
+		FilePath:  file.FilePath,
+	}
+
 	db := d.GetDatabase()
 
 	query := db.Exec(
 		"INSERT into files (id, project_id, file_path) values (?,?,?)",
-		file.ID,
-		file.ProjectID,
-		file.FilePath,
+		dto.ID,
+		dto.ProjectID,
+		dto.FilePath,
 	)
 
 	return query.Error
