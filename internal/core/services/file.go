@@ -33,19 +33,12 @@ func (f File) CheckFile(entry *domain.File) error {
 	return nil
 }
 
-<<<<<<< HEAD
-// corrigir pra camada de domain
-func (f *File) SaveFile(entry *domain.File) error {
-	content := &domain.File{
-		ID: uuid.New().String(),
-=======
 func (f *File) SaveFile(entry *domain.File) error {
 
 	content := &domain.File{
 		ID:        uuid.New().String(),
 		ProjectID: entry.ProjectID,
 		FilePath:  entry.FilePath,
->>>>>>> 0ceae2d6338a43dbcf7d20f0a41503cd42613423
 	}
 
 	err := f.repo.SaveFile(content)
