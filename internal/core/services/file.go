@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/ditointernet/tradulab-service/database"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
+	"github.com/ditointernet/tradulab-service/repository"
 	"github.com/google/uuid"
 )
 
@@ -16,10 +16,10 @@ type FileHandler interface {
 }
 
 type File struct {
-	repo database.Database
+	repo repository.Database
 }
 
-func MustNewFile(repo database.Database) *File {
+func MustNewFile(repo repository.Database) *File {
 	return &File{repo: repo}
 }
 

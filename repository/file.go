@@ -1,4 +1,4 @@
-package database
+package repository
 
 type File struct {
 	ID        string `gorm:"primaryKey"`

@@ -3,18 +3,18 @@ package main
 import (
 	"fmt"
 
-	"github.com/ditointernet/tradulab-service/database"
+	"github.com/ditointernet/tradulab-service/repository"
 )
 
 func main() {
 
-	env, pan := database.GoDotEnvVariable()
+	env, pan := repository.GoDotEnvVariable()
 	if pan != nil {
 		fmt.Println("Error during environment variables build", pan.Error())
 		return
 	}
 
-	db := database.NewConfig(&database.ConfigDB{
+	db := repository.NewConfig(&repository.ConfigDB{
 		User:     env.User,
 		Host:     env.Host,
 		Password: env.Password,
@@ -22,7 +22,7 @@ func main() {
 		Port:     env.Port,
 	})
 
-	tables := &database.File{}
+	tables := &repository.File{}
 
 	db.StartPostgres()
 
