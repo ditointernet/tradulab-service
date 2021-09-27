@@ -3,20 +3,20 @@ package main
 import (
 	"fmt"
 
-	"github.com/ditointernet/tradulab-service/database"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/ditointernet/tradulab-service/internal/rest"
+	"github.com/ditointernet/tradulab-service/repository"
 )
 
 func main() {
 
-	env, err := database.GoDotEnvVariable()
+	env, err := repository.GoDotEnvVariable()
 	if err != nil {
 		fmt.Println("Error during environment variables build", err.Error())
 		return
 	}
 
-	db := database.NewConfig(&database.ConfigDB{
+	db := repository.NewConfig(&repository.ConfigDB{
 		User:     env.User,
 		Host:     env.Host,
 		Password: env.Password,
