@@ -4,7 +4,6 @@ import (
 	"os"
 )
 
-// refatorar
 type Config struct {
 	User     string
 	Host     string

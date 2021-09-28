@@ -10,14 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type ConfigDB struct {
-// 	User     string
-// 	Host     string
-// 	Password string
-// 	DbName   string
-// 	Port     string
-// }
-
 type Database struct {
 	db *gorm.DB
 	in *Config
