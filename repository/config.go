@@ -1,12 +1,10 @@
 package repository
 
 import (
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
+// refatorar
 type Config struct {
 	User     string
 	Host     string
@@ -16,10 +14,6 @@ type Config struct {
 }
 
 func GoDotEnvVariable() (*Config, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
 
 	c := &Config{
 		User:     os.Getenv("POSTGRES_USER"),

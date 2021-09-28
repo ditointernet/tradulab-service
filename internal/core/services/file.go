@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
-	"github.com/ditointernet/tradulab-service/repository"
+	"github.com/ditointernet/tradulab-service/internal/core/ports"
 	"github.com/google/uuid"
 )
 
@@ -16,10 +17,10 @@ type FileHandler interface {
 }
 
 type File struct {
-	repo repository.Database
+	repo ports.Repository
 }
 
-func MustNewFile(repo repository.Database) *File {
+func MustNewFile(repo ports.Repository) *File {
 	return &File{repo: repo}
 }
 
@@ -35,13 +36,15 @@ func (f File) CheckFile(entry *domain.File) error {
 
 func (f *File) SaveFile(entry *domain.File) error {
 
-	content := &domain.File{
-		ID:        uuid.New().String(),
+	entry.ID = uuid.New().String()
+
+	dto := &driven.File{
+		ID:        entry.ID,
 		ProjectID: entry.ProjectID,
 		FilePath:  entry.FilePath,
 	}
 
-	err := f.repo.SaveFile(content)
+	err := f.repo.SaveFile(dto)
 
 	if err != nil {
 		fmt.Println(err)

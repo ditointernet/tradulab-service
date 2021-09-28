@@ -22,6 +22,8 @@ services:
       - tradulab-db
     networks:
       tradulab-network: {}
+    env_file:
+      - .env
 
     
   migrate:

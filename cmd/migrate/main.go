@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/repository"
 )
 
@@ -14,7 +15,7 @@ func main() {
 		return
 	}
 
-	db := repository.NewConfig(&repository.ConfigDB{
+	db := repository.NewDatabase(&repository.Config{
 		User:     env.User,
 		Host:     env.Host,
 		Password: env.Password,
@@ -22,7 +23,7 @@ func main() {
 		Port:     env.Port,
 	})
 
-	tables := &repository.File{}
+	tables := &driven.File{}
 
 	db.StartPostgres()
 

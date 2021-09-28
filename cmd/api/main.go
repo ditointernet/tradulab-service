@@ -16,7 +16,7 @@ func main() {
 		return
 	}
 
-	db := repository.NewConfig(&repository.ConfigDB{
+	db := repository.NewDatabase(&repository.Config{
 		User:     env.User,
 		Host:     env.Host,
 		Password: env.Password,
@@ -27,7 +27,7 @@ func main() {
 	server := MustNewServer()
 
 	db.StartPostgres()
-	fService := services.MustNewFile(*db)
+	fService := services.MustNewFile(db)
 
 	router := server.Listen()
 	rPhrase := rest.MustNewPhrase()

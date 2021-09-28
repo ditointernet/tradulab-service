@@ -41,13 +41,6 @@ func (f File) CreateFile(ctx *gin.Context) {
 		ProjectID: body.ProjectID,
 		FilePath:  body.FilePath,
 	}
-	err = f.in.File.SaveFile(file)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
 	err = f.in.File.CheckFile(file)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -55,8 +48,16 @@ func (f File) CreateFile(ctx *gin.Context) {
 		})
 		return
 	}
+	err = f.in.File.SaveFile(file)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Upload complete",
+		"file_id": file.ID,
 	})
 }

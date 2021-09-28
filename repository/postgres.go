@@ -4,27 +4,26 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ditointernet/tradulab-service/internal/core/domain"
-
+	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type ConfigDB struct {
-	User     string
-	Host     string
-	Password string
-	DbName   string
-	Port     string
-}
+// type ConfigDB struct {
+// 	User     string
+// 	Host     string
+// 	Password string
+// 	DbName   string
+// 	Port     string
+// }
 
 type Database struct {
 	db *gorm.DB
-	in *ConfigDB
+	in *Config
 }
 
-func NewConfig(in *ConfigDB) *Database {
+func NewDatabase(in *Config) *Database {
 	return &Database{
 		in: in,
 	}
@@ -57,21 +56,15 @@ func (d *Database) GetDatabase() *gorm.DB {
 	return d.db
 }
 
-func (d *Database) SaveFile(file *domain.File) error {
-
-	dto := &File{
-		ID:        file.ID,
-		ProjectID: file.ProjectID,
-		FilePath:  file.FilePath,
-	}
+func (d *Database) SaveFile(file *driven.File) error {
 
 	db := d.GetDatabase()
 
 	query := db.Exec(
 		"INSERT into files (id, project_id, file_path) values (?,?,?)",
-		dto.ID,
-		dto.ProjectID,
-		dto.FilePath,
+		file.ID,
+		file.ProjectID,
+		file.FilePath,
 	)
 
 	return query.Error

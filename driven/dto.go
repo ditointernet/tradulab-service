@@ -1,4 +1,4 @@
-package repository
+package driven
 
 type File struct {
 	ID        string `gorm:"primaryKey"`

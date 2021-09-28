@@ -1,9 +1,7 @@
 package ports
 
-import (
-	"github.com/ditointernet/tradulab-service/internal/core/domain"
-)
+import "github.com/ditointernet/tradulab-service/driven"
 
 type Repository interface {
-	SaveFile(*domain.File) error
+	SaveFile(*driven.File) error
 }
