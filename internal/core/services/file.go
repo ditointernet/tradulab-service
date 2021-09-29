@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/ports"
 	"github.com/google/uuid"
@@ -38,13 +37,7 @@ func (f *File) SaveFile(entry *domain.File) error {
 
 	entry.ID = uuid.New().String()
 
-	dto := &driven.File{
-		ID:        entry.ID,
-		ProjectID: entry.ProjectID,
-		FilePath:  entry.FilePath,
-	}
-
-	err := f.repo.SaveFile(dto)
+	err := f.repo.SaveFile(entry)
 
 	if err != nil {
 		fmt.Println(err)

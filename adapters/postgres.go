@@ -1,10 +1,9 @@
-package repository
+package adapters
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -53,18 +52,4 @@ func (d *Database) StartPostgres() {
 
 func (d *Database) GetDatabase() *gorm.DB {
 	return d.db
-}
-
-func (d *Database) SaveFile(file *driven.File) error {
-
-	db := d.GetDatabase()
-
-	query := db.Exec(
-		"INSERT into files (id, project_id, file_path) values (?,?,?)",
-		file.ID,
-		file.ProjectID,
-		file.FilePath,
-	)
-
-	return query.Error
 }
