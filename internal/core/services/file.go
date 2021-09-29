@@ -16,10 +16,10 @@ type FileHandler interface {
 }
 
 type File struct {
-	repo ports.Repository
+	repo ports.FileRepository
 }
 
-func MustNewFile(repo ports.Repository) *File {
+func MustNewFile(repo ports.FileRepository) *File {
 	return &File{repo: repo}
 }
 

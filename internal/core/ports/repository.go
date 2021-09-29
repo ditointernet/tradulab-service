@@ -4,6 +4,6 @@ import (
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 )
 
-type Repository interface {
+type FileRepository interface {
 	SaveFile(*domain.File) error
 }
