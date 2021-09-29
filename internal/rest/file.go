@@ -58,6 +58,6 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Upload complete",
-		"file_id": file.ID,
+		"id":      file.ID,
 	})
 }
