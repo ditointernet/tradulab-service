@@ -2,18 +2,12 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"path/filepath"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/ports"
 	"github.com/google/uuid"
 )
-
-type FileHandler interface {
-	CheckFile(*domain.File) error
-	SaveFile(*domain.File) error
-}
 
 type File struct {
 	repo ports.FileRepository
@@ -40,7 +34,7 @@ func (f *File) SaveFile(entry *domain.File) error {
 	err := f.repo.SaveFile(entry)
 
 	if err != nil {
-		fmt.Println(err)
+		return errors.New("error in database")
 	}
 
 	return nil

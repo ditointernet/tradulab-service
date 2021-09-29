@@ -28,7 +28,8 @@ func main() {
 	server := MustNewServer()
 
 	db.StartPostgres()
-	fRepository := repository.MustNewFile(db)
+	sql, err := db.GetDatabase()
+	fRepository := repository.MustNewFile(sql)
 	fService := services.MustNewFile(fRepository)
 
 	router := server.Listen()

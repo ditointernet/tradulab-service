@@ -6,12 +6,12 @@ import (
 
 	"github.com/ditointernet/tradulab-service/drivers"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
-	"github.com/ditointernet/tradulab-service/internal/core/services"
+	"github.com/ditointernet/tradulab-service/internal/core/ports"
 	"github.com/gin-gonic/gin"
 )
 
 type ServiceInput struct {
-	File services.FileHandler
+	File ports.FileHandler
 }
 
 type File struct {

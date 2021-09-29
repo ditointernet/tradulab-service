@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -50,6 +51,6 @@ func (d *Database) StartPostgres() {
 	d.db = database
 }
 
-func (d *Database) GetDatabase() *gorm.DB {
-	return d.db
+func (d *Database) GetDatabase() (*sql.DB, error) {
+	return d.db.DB()
 }
