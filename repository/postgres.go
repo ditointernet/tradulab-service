@@ -33,7 +33,14 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 
 func (d *Database) StartPostgres() {
 
-	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", d.in.Host, d.in.User, d.in.Password, d.in.DbName, d.in.Port)
+	dns := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		d.in.Host,
+		d.in.User,
+		d.in.Password,
+		d.in.DbName,
+		d.in.Port,
+	)
 
 	database, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
