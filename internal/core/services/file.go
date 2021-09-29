@@ -34,7 +34,7 @@ func (f *File) SaveFile(entry *domain.File) error {
 	err := f.repo.SaveFile(entry)
 
 	if err != nil {
-		return errors.New("error in database")
+		return err
 	}
 
 	return nil
