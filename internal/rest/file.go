@@ -6,12 +6,12 @@ import (
 
 	"github.com/ditointernet/tradulab-service/drivers"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
-	"github.com/ditointernet/tradulab-service/internal/core/ports"
+	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/gin-gonic/gin"
 )
 
 type ServiceInput struct {
-	File ports.FileHandler
+	File services.FileHandler
 }
 
 type File struct {
@@ -27,7 +27,6 @@ func NewFile(in ServiceInput) (*File, error) {
 }
 
 func (f File) CreateFile(ctx *gin.Context) {
-
 	body := &drivers.File{}
 	err := ctx.ShouldBindJSON(body)
 	if err != nil {
@@ -41,13 +40,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		ProjectID: body.ProjectID,
 		FilePath:  body.FilePath,
 	}
-	err = f.in.File.CheckFile(file)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+
 	err = f.in.File.SaveFile(file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
