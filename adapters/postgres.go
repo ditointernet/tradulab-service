@@ -22,5 +22,6 @@ func NewDatabase(in *Config) *gorm.DB {
 		fmt.Println("Could not connect to the Postgres Database")
 		log.Fatal("error: ", err)
 	}
+
 	return database
 }
