@@ -8,8 +8,6 @@ services:
       POSTGRES_DB: tradulab
     ports: 
       - "5432:5432"
-    networks:
-      tradulab-network: {}
     
   web:
     build: .
@@ -20,8 +18,6 @@ services:
       - "8080:8080"
     depends_on:
       - tradulab-db
-    networks:
-      tradulab-network: {}
     env_file:
       - .env
 
@@ -33,12 +29,6 @@ services:
       - .:/app
     depends_on:
       - tradulab-db
-    networks:
-      tradulab-network: {}
     env_file:
       - .env
 
-networks:
-  tradulab-network:
-    name: tradulab-network
-    external: false
