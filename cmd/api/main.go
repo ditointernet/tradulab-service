@@ -27,9 +27,7 @@ func main() {
 
 	server := MustNewServer()
 
-	db.StartPostgres()
-	sql, err := db.GetDatabase()
-
+	sql, err := db.DB()
 	if err != nil {
 		panic(err)
 	}

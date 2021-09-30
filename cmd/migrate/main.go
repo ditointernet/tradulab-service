@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	env, pan := adapters.GoDotEnvVariable()
 	if pan != nil {
 		fmt.Println("Error during environment variables build", pan.Error())
@@ -25,12 +24,8 @@ func main() {
 
 	tables := &driven.File{}
 
-	db.StartPostgres()
-
-	err := db.AutoMigration(tables)
-
+	err := db.AutoMigrate(tables)
 	if err != nil {
 		panic(err)
 	}
-
 }
