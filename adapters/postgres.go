@@ -32,7 +32,6 @@ func (d *Database) AutoMigration(arg ...interface{}) error {
 }
 
 func (d *Database) StartPostgres() {
-
 	dns := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		d.in.Host,
