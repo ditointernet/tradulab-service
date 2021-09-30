@@ -29,6 +29,11 @@ func main() {
 
 	db.StartPostgres()
 	sql, err := db.GetDatabase()
+
+	if err != nil {
+		panic(err)
+	}
+
 	fRepository := repository.MustNewFile(sql)
 	fService := services.MustNewFile(fRepository)
 
