@@ -18,7 +18,6 @@ func MustNewFile(db *sql.DB) *File {
 }
 
 func (d *File) SaveFile(file *domain.File) error {
-
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
