@@ -20,14 +20,13 @@ type File struct {
 
 func NewFile(in ServiceInput) (*File, error) {
 	if in.File == nil {
-		return nil, fmt.Errorf("Error message...")
+		return nil, fmt.Errorf("error message")
 	}
 
 	return &File{in: in}, nil
 }
 
 func (f File) CreateFile(ctx *gin.Context) {
-
 	body := &drivers.File{}
 	err := ctx.ShouldBindJSON(body)
 	if err != nil {
@@ -41,9 +40,10 @@ func (f File) CreateFile(ctx *gin.Context) {
 		ProjectID: body.ProjectID,
 		FilePath:  body.FilePath,
 	}
-	err = f.in.File.CheckFile(file)
+
+	err = f.in.File.SaveFile(file)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -51,24 +51,6 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Upload complete",
-		"file":    file,
+		"id":      file.ID,
 	})
-
-	/*form, _ := ctx.MultipartForm()
-	files := form.File["upload[]"]
-
-	for _, file := range files {
-		body := &File{}
-		err := ctx.ShouldBindJSON(body)
-		if err != nil {
-			ctx.JSON(500, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		ctx.SaveUploadedFile(file, "/ports")
-		body.FilePath = "/ports/"
-	}
-
-	jsonValue, err := json.Marshal(body)*/
 }

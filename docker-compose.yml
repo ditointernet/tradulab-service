@@ -1,10 +1,14 @@
 version: '3'
 services:
-  database:
+  tradulab-db:
     image: postgres:9.6-stretch
     environment:
-      POSTGRES_PASSWORD: abacate
-
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: tradulab
+    ports: 
+      - "5432:5432"
+    
   web:
     build: .
     command: "go run ./cmd/api"
@@ -12,5 +16,19 @@ services:
       - .:/app
     ports:
       - "8080:8080"
-    links:
-      - database
+    depends_on:
+      - tradulab-db
+    env_file:
+      - .env
+
+    
+  migrate:
+    build: .
+    command: "go run ./cmd/migrate"
+    volumes:
+      - .:/app
+    depends_on:
+      - tradulab-db
+    env_file:
+      - .env
+
