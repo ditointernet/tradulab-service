@@ -40,6 +40,9 @@ func (d *File) GetFiles() ([]domain.File, error) {
 	allFiles, err := d.cli.Query(
 		"SELECT * FROM files",
 	)
+	
+	defer allFiles.Close()
+	
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +63,6 @@ func (d *File) GetFiles() ([]domain.File, error) {
 
 		files = append(files, f)
 	}
-
-	defer allFiles.Close()
 
 	return files, nil
 }
