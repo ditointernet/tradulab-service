@@ -36,7 +36,6 @@ func (d *File) SaveFile(file *domain.File) error {
 
 func (d *File) GetFiles() ([]domain.File, error) {
 	var files []domain.File
-	f := domain.File{}
 
 	allFiles, err := d.cli.Query(
 		"SELECT * FROM files",
@@ -53,9 +52,11 @@ func (d *File) GetFiles() ([]domain.File, error) {
 			return nil, err
 		}
 
-		f.ID = id
-		f.ProjectID = project_id
-		f.FilePath = file_path
+		f := domain.File{
+			ID:        id,
+			ProjectID: project_id,
+			FilePath:  file_path,
+		}
 
 		files = append(files, f)
 	}
