@@ -21,7 +21,7 @@ services:
     env_file:
       - .env
 
-    
+
   migrate:
     build: .
     command: "go run ./cmd/migrate"
@@ -31,4 +31,3 @@ services:
       - tradulab-db
     env_file:
       - .env
-

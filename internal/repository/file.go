@@ -33,3 +33,35 @@ func (d *File) SaveFile(file *domain.File) error {
 
 	return err
 }
+
+func (d *File) GetFiles() ([]*domain.File, error) {
+	var files []*domain.File
+	f := domain.File{}
+
+	allFiles, err := d.cli.Query(
+		"SELECT * FROM files",
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for allFiles.Next() {
+		var id, project_id, file_path string
+
+		err = allFiles.Scan(&id, &project_id, &file_path)
+		if err != nil {
+			return nil, err
+		}
+
+		f.ID = id
+		f.ProjectID = project_id
+		f.FilePath = file_path
+
+		files = append(files, &f)
+	}
+
+	defer allFiles.Close()
+
+	return files, nil
+
+}

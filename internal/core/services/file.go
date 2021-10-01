@@ -43,3 +43,12 @@ func (f *File) SaveFile(entry *domain.File) error {
 
 	return nil
 }
+
+func (f *File) GetFiles() ([]*domain.File, error) {
+	files, err := f.repo.GetFiles()
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}
