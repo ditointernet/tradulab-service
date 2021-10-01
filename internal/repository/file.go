@@ -44,6 +44,8 @@ func (d *File) GetFiles() ([]domain.File, error) {
 		return nil, err
 	}
 
+	defer allFiles.Close()
+
 	for allFiles.Next() {
 		var id, project_id, file_path string
 
@@ -60,8 +62,6 @@ func (d *File) GetFiles() ([]domain.File, error) {
 
 		files = append(files, f)
 	}
-
-	defer allFiles.Close()
 
 	return files, nil
 }
