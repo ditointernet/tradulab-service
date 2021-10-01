@@ -34,8 +34,8 @@ func (d *File) SaveFile(file *domain.File) error {
 	return err
 }
 
-func (d *File) GetFiles() ([]*domain.File, error) {
-	var files []*domain.File
+func (d *File) GetFiles() ([]domain.File, error) {
+	var files []domain.File
 	f := domain.File{}
 
 	allFiles, err := d.cli.Query(
@@ -57,11 +57,10 @@ func (d *File) GetFiles() ([]*domain.File, error) {
 		f.ProjectID = project_id
 		f.FilePath = file_path
 
-		files = append(files, &f)
+		files = append(files, f)
 	}
 
 	defer allFiles.Close()
 
 	return files, nil
-
 }

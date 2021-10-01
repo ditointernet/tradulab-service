@@ -6,5 +6,5 @@ import (
 
 type FileRepository interface {
 	SaveFile(file *domain.File) error
-	GetFiles() ([]*domain.File, error)
+	GetFiles() ([]domain.File, error)
 }
