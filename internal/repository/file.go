@@ -38,7 +38,7 @@ func (d *File) GetFiles() ([]domain.File, error) {
 	var files []domain.File
 
 	allFiles, err := d.cli.Query(
-		"SELECT * FROM files",
+		"SELECT id, project_id, file_path FROM files",
 	)
 	if err != nil {
 		return nil, err
