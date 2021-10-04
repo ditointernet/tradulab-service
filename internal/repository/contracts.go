@@ -6,4 +6,6 @@ import (
 
 type FileRepository interface {
 	SaveFile(file *domain.File) error
+	FindFile(id string) error
+	EditFile(file *domain.File) error
 }
