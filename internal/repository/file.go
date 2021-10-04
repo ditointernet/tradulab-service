@@ -43,24 +43,17 @@ func (d *File) GetFiles() ([]domain.File, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer allFiles.Close()
 
 	for allFiles.Next() {
-		var id, project_id, file_path string
+		var file domain.File
 
-		err = allFiles.Scan(&id, &project_id, &file_path)
+		err = allFiles.Scan(&file.ID, &file.ProjectID, &file.FilePath)
 		if err != nil {
 			return nil, err
 		}
 
-		f := domain.File{
-			ID:        id,
-			ProjectID: project_id,
-			FilePath:  file_path,
-		}
-
-		files = append(files, f)
+		files = append(files, file)
 	}
 
 	return files, nil
