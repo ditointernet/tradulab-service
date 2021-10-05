@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -34,34 +35,34 @@ func (d *File) SaveFile(file *domain.File) error {
 	return err
 }
 
-func (d *File) GetFiles() ([]*domain.File, error) {
-	var files []*domain.File
-	f := domain.File{}
-
-	allFiles, err := d.cli.Query(
-		"SELECT * FROM files",
-	)
+func (d *File) FindFile(id string) error {
+	var file domain.File
+	err := d.cli.QueryRow("SELECT id, project_id, file_path FROM files WHERE id = $1",
+		id).Scan(&file.ID, &file.ProjectID, &file.FilePath)
 	if err != nil {
-		return nil, err
-	}
-
-	for allFiles.Next() {
-		var id, project_id, file_path string
-
-		err = allFiles.Scan(&id, &project_id, &file_path)
-		if err != nil {
-			return nil, err
+		if err == sql.ErrNoRows {
+			return errors.New("file not found")
 		}
+		return err
 
-		f.ID = id
-		f.ProjectID = project_id
-		f.FilePath = file_path
-
-		files = append(files, &f)
 	}
 
-	defer allFiles.Close()
+	return nil
+}
 
-	return files, nil
+func (d *File) EditFile(file *domain.File) error {
+	dto := &driven.File{
+		ID:        file.ID,
+		ProjectID: file.ProjectID,
+		FilePath:  file.FilePath,
+	}
 
+	_, err := d.cli.Exec(
+		"UPDATE files SET project_id = $2, file_path = $3 WHERE id = $1",
+		dto.ID,
+		dto.ProjectID,
+		dto.FilePath,
+	)
+
+	return err
 }

@@ -46,7 +46,7 @@ func main() {
 
 	// router.GET("/:id", rPhrase.FindByID)
 	router.POST("/file", rFile.CreateFile)
-	router.GET("/file", rFile.GetAllFiles)
+	router.PUT("/file/:id", rFile.EditFile)
 
 	router.Run()
 }

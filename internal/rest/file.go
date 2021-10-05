@@ -55,17 +55,32 @@ func (f File) CreateFile(ctx *gin.Context) {
 	})
 }
 
-func (f File) GetAllFiles(ctx *gin.Context) {
-	files, err := f.in.File.GetFiles()
-
+func (f File) EditFile(ctx *gin.Context) {
+	body := &drivers.File{}
+	err := ctx.ShouldBindJSON(body)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	id := ctx.Param("id")
+	file := &domain.File{
+		ID:        id,
+		ProjectID: body.ProjectID,
+		FilePath:  body.FilePath,
+	}
+	err = f.in.File.EditFile(file)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"files": files,
+		"message": "File successfully edited",
+		"id":      file.ID,
 	})
 }
