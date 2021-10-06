@@ -52,15 +52,13 @@ func (d *File) FindFile(id string) error {
 
 func (d *File) EditFile(file *domain.File) error {
 	dto := &driven.File{
-		ID:        file.ID,
-		ProjectID: file.ProjectID,
-		FilePath:  file.FilePath,
+		ID:       file.ID,
+		FilePath: file.FilePath,
 	}
 
 	_, err := d.cli.Exec(
-		"UPDATE files SET project_id = $2, file_path = $3 WHERE id = $1",
+		"UPDATE files SET file_path = $2 WHERE id = $1",
 		dto.ID,
-		dto.ProjectID,
 		dto.FilePath,
 	)
 
