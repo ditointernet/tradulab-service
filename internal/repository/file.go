@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/ditointernet/tradulab-service/driven"
@@ -17,7 +18,7 @@ func MustNewFile(db *sql.DB) *File {
 	}
 }
 
-func (d *File) SaveFile(file *domain.File) error {
+func (d *File) SaveFile(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
@@ -34,7 +35,7 @@ func (d *File) SaveFile(file *domain.File) error {
 	return err
 }
 
-func (d *File) GetFiles() ([]domain.File, error) {
+func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	var files []domain.File
 
 	allFiles, err := d.cli.Query(

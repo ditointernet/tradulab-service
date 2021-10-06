@@ -1,8 +1,12 @@
 package services
 
-import "github.com/ditointernet/tradulab-service/internal/core/domain"
+import (
+	"context"
+
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
+)
 
 type FileHandler interface {
-	SaveFile(*domain.File) error
-	GetFiles() ([]domain.File, error)
+	SaveFile(ctx context.Context, file *domain.File) error
+	GetFiles(ctx context.Context) ([]domain.File, error)
 }

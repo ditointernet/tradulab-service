@@ -41,7 +41,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FilePath:  body.FilePath,
 	}
 
-	err = f.in.File.SaveFile(file)
+	err = f.in.File.SaveFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -56,7 +56,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 }
 
 func (f File) GetAllFiles(ctx *gin.Context) {
-	files, err := f.in.File.GetFiles()
+	files, err := f.in.File.GetFiles(ctx)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{

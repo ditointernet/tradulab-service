@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 
@@ -27,7 +28,7 @@ func (f File) CheckFile(entry *domain.File) error {
 	return nil
 }
 
-func (f *File) SaveFile(entry *domain.File) error {
+func (f *File) SaveFile(ctx context.Context, entry *domain.File) error {
 	err := f.CheckFile(entry)
 
 	if err != nil {
@@ -36,7 +37,7 @@ func (f *File) SaveFile(entry *domain.File) error {
 
 	entry.ID = uuid.New().String()
 
-	err = f.repo.SaveFile(entry)
+	err = f.repo.SaveFile(ctx, entry)
 	if err != nil {
 		return err
 	}
@@ -44,8 +45,8 @@ func (f *File) SaveFile(entry *domain.File) error {
 	return nil
 }
 
-func (f *File) GetFiles() ([]domain.File, error) {
-	files, err := f.repo.GetFiles()
+func (f *File) GetFiles(ctx context.Context) ([]domain.File, error) {
+	files, err := f.repo.GetFiles(ctx)
 	if err != nil {
 		return nil, err
 	}
