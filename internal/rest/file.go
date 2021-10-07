@@ -28,6 +28,7 @@ func NewFile(in ServiceInput) (*File, error) {
 
 func (f File) CreateFile(ctx *gin.Context) {
 	body := &drivers.File{}
+
 	err := ctx.ShouldBindJSON(body)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -41,7 +42,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FilePath:  body.FilePath,
 	}
 
-	err = f.in.File.SaveFile(ctx, file)
+	err = f.in.File.CreateFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -57,7 +58,6 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 func (f File) GetAllFiles(ctx *gin.Context) {
 	files, err := f.in.File.GetFiles(ctx)
-
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -67,5 +67,35 @@ func (f File) GetAllFiles(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"files": files,
+	})
+}
+
+func (f File) EditFile(ctx *gin.Context) {
+	body := &drivers.File{}
+	err := ctx.ShouldBindJSON(body)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	id := ctx.Param("id")
+	file := &domain.File{
+		ID:       id,
+		FilePath: body.FilePath,
+	}
+
+	err = f.in.File.EditFile(ctx, file)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "File successfully edited",
+		"id":      file.ID,
 	})
 }
