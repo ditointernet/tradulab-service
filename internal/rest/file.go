@@ -41,7 +41,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FilePath:  body.FilePath,
 	}
 
-	err = f.in.File.SaveFile(file)
+	err = f.in.File.SaveFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -52,5 +52,20 @@ func (f File) CreateFile(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Upload complete",
 		"id":      file.ID,
+	})
+}
+
+func (f File) GetAllFiles(ctx *gin.Context) {
+	files, err := f.in.File.GetFiles(ctx)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"files": files,
 	})
 }

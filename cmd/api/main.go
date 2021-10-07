@@ -36,7 +36,7 @@ func main() {
 	fService := services.MustNewFile(fRepository)
 
 	router := server.Listen()
-	rPhrase := rest.MustNewPhrase()
+	// rPhrase := rest.MustNewPhrase()
 	rFile, err := rest.NewFile(rest.ServiceInput{
 		File: fService,
 	})
@@ -44,8 +44,9 @@ func main() {
 		panic(err)
 	}
 
-	router.GET("/:id", rPhrase.FindByID)
+	// router.GET("/:id", rPhrase.FindByID)
 	router.POST("/file", rFile.CreateFile)
+	router.GET("/file", rFile.GetAllFiles)
 
 	router.Run()
 }
