@@ -28,6 +28,7 @@ func NewFile(in ServiceInput) (*File, error) {
 
 func (f File) CreateFile(ctx *gin.Context) {
 	body := &drivers.File{}
+
 	err := ctx.ShouldBindJSON(body)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -41,7 +42,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FilePath:  body.FilePath,
 	}
 
-	err = f.in.File.SaveFile(file)
+	err = f.in.File.SaveFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -57,6 +58,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 func (f File) EditFile(ctx *gin.Context) {
 	body := &drivers.File{}
+
 	err := ctx.ShouldBindJSON(body)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -71,7 +73,8 @@ func (f File) EditFile(ctx *gin.Context) {
 		ProjectID: body.ProjectID,
 		FilePath:  body.FilePath,
 	}
-	err = f.in.File.EditFile(file)
+
+	err = f.in.File.EditFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

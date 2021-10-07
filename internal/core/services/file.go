@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 
@@ -18,7 +19,6 @@ func MustNewFile(repo repository.FileRepository) *File {
 }
 
 func (f File) CheckFile(entry *domain.File) error {
-
 	extension := filepath.Ext(entry.FilePath)
 	if extension != ".csv" {
 		return errors.New("file not supported. Must be .csv")
@@ -27,16 +27,15 @@ func (f File) CheckFile(entry *domain.File) error {
 	return nil
 }
 
-func (f *File) SaveFile(entry *domain.File) error {
+func (f *File) SaveFile(ctx context.Context, entry *domain.File) error {
 	err := f.CheckFile(entry)
-
 	if err != nil {
 		return err
 	}
 
 	entry.ID = uuid.New().String()
 
-	err = f.repo.SaveFile(entry)
+	err = f.repo.SaveFile(ctx, entry)
 	if err != nil {
 		return err
 	}
@@ -44,8 +43,8 @@ func (f *File) SaveFile(entry *domain.File) error {
 	return nil
 }
 
-func (f File) findFile(id string) error {
-	err := f.repo.FindFile(id)
+func (f File) findFile(ctx context.Context, id string) error {
+	err := f.repo.FindFile(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -53,13 +52,13 @@ func (f File) findFile(id string) error {
 	return nil
 }
 
-func (f *File) EditFile(entry *domain.File) error {
-	err := f.findFile(entry.ID)
+func (f *File) EditFile(ctx context.Context, entry *domain.File) error {
+	err := f.findFile(ctx, entry.ID)
 	if err != nil {
 		return err
 	}
 
-	err = f.repo.EditFile(entry)
+	err = f.repo.EditFile(ctx, entry)
 	if err != nil {
 		return err
 	}
