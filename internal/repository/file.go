@@ -25,7 +25,8 @@ func (d *File) SaveFile(ctx context.Context, file *domain.File) error {
 		FilePath:  file.FilePath,
 	}
 
-	_, err := d.cli.Exec(
+	_, err := d.cli.ExecContext(
+		ctx,
 		"INSERT into files (id, project_id, file_path) values ($1, $2, $3)",
 		dto.ID,
 		dto.ProjectID,
@@ -38,9 +39,7 @@ func (d *File) SaveFile(ctx context.Context, file *domain.File) error {
 func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := d.cli.Query(
-		"SELECT id, project_id, file_path FROM files",
-	)
+	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, file_path FROM files")
 	if err != nil {
 		return nil, err
 	}
