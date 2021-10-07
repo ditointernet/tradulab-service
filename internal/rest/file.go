@@ -69,9 +69,8 @@ func (f File) EditFile(ctx *gin.Context) {
 
 	id := ctx.Param("id")
 	file := &domain.File{
-		ID:        id,
-		ProjectID: body.ProjectID,
-		FilePath:  body.FilePath,
+		ID:       id,
+		FilePath: body.FilePath,
 	}
 
 	err = f.in.File.EditFile(ctx, file)
