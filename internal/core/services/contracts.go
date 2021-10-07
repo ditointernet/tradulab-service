@@ -9,4 +9,5 @@ import (
 type FileHandler interface {
 	SaveFile(ctx context.Context, file *domain.File) error
 	EditFile(ctx context.Context, file *domain.File) error
+	GetFiles(ctx context.Context) ([]domain.File, error)
 }
