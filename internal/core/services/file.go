@@ -51,13 +51,14 @@ func (f File) findFile(ctx context.Context, id string) error {
 
 	return nil
 }
+
 func (f *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	files, err := f.repo.GetFiles(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return files, nil
 }
 
 func (f *File) EditFile(ctx context.Context, entry *domain.File) error {
