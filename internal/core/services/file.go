@@ -27,7 +27,7 @@ func (f File) CheckFile(entry *domain.File) error {
 	return nil
 }
 
-func (f *File) SaveFile(ctx context.Context, entry *domain.File) error {
+func (f *File) CreateFile(ctx context.Context, entry *domain.File) error {
 	err := f.CheckFile(entry)
 	if err != nil {
 		return err
@@ -35,7 +35,7 @@ func (f *File) SaveFile(ctx context.Context, entry *domain.File) error {
 
 	entry.ID = uuid.New().String()
 
-	err = f.repo.SaveFile(ctx, entry)
+	err = f.repo.CreateFile(ctx, entry)
 	if err != nil {
 		return err
 	}

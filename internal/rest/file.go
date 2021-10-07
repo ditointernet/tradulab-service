@@ -42,7 +42,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FilePath:  body.FilePath,
 	}
 
-	err = f.in.File.SaveFile(ctx, file)
+	err = f.in.File.CreateFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
