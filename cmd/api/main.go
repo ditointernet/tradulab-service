@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
+	"cloud.google.com/go/storage"
 	"github.com/ditointernet/tradulab-service/adapters"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/ditointernet/tradulab-service/internal/repository"
@@ -31,6 +33,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		fmt.Println("Could not connect to the Google Cloud Storage")
+	}
+
+	if err := client.Close(); err != nil {
+		fmt.Println("Could not close the GCS")
+	}
+	store22 := adapters.MustNewGCS(client, ctx)
+	store22.ListBucket()
 
 	fRepository := repository.MustNewFile(sql)
 	fService := services.MustNewFile(fRepository)

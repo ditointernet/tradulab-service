@@ -11,11 +11,13 @@ import (
 
 type File struct {
 	cli *sql.DB
+	// gcs *storage.Client
 }
 
 func MustNewFile(db *sql.DB) *File {
 	return &File{
 		cli: db,
+		// gcs: gcs,
 	}
 }
 
