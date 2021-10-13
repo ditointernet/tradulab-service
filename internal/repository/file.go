@@ -23,15 +23,15 @@ func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
-		FilePath:  file.FilePath,
+		Status:    "CREATED",
 	}
 
 	_, err := d.cli.ExecContext(
 		ctx,
-		"INSERT into files (id, project_id, file_path) values ($1, $2, $3)",
+		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
 		dto.ID,
 		dto.ProjectID,
-		dto.FilePath,
+		dto.Status,
 	)
 
 	return err
