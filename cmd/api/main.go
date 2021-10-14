@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/ditointernet/tradulab-service/adapters"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/ditointernet/tradulab-service/internal/repository"
@@ -33,7 +32,10 @@ func main() {
 	}
 
 	fRepository := repository.MustNewFile(sql)
+	// 	storage := storage.MustNewStorage(context.Background(), env.ProjectID, env.BucketName, env.ExpirationTime, env.AllowedType )
 	fService := services.MustNewFile(fRepository)
+
+
 
 	router := server.Listen()
 	// rPhrase := rest.MustNewPhrase()

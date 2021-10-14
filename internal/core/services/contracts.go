@@ -11,3 +11,7 @@ type FileHandler interface {
 	EditFile(ctx context.Context, file *domain.File) error
 	GetFiles(ctx context.Context) ([]domain.File, error)
 }
+
+type FileStorage interface {
+	CreateSignedURL(ctx context.Context, fileID string) (string, error)
+}

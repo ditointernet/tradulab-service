@@ -3,6 +3,7 @@ module github.com/ditointernet/tradulab-service
 go 1.16
 
 require (
+	cloud.google.com/go/storage v1.18.0 // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.3.0 // indirect

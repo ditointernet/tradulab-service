@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -10,9 +11,16 @@ type Config struct {
 	Password string
 	DbName   string
 	Port     string
+
+	ProjectID string
+	BucketName string
+	AllowedType string
+	ExpirationTime int
 }
 
 func GoDotEnvVariable() (*Config, error) {
+
+	expTime,_ := strconv.Atoi(os.Getenv("EXPIRATION_TIME"))
 
 	c := &Config{
 		User:     os.Getenv("POSTGRES_USER"),
@@ -20,6 +28,10 @@ func GoDotEnvVariable() (*Config, error) {
 		Password: os.Getenv("POSTGRES_PASSWORD"),
 		DbName:   os.Getenv("POSTGRES_DB"),
 		Port:     os.Getenv("PORTPOSTGRES"),
+		ProjectID: os.Getenv("PROJECT_ID"),
+		BucketName: os.Getenv("BUCKET_NAME"),
+		AllowedType: os.Getenv("ALLOWED_TYPE"),
+		ExpirationTime: expTime,
 	}
 
 	return c, nil
