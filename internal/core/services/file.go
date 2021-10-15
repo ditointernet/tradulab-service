@@ -11,16 +11,20 @@ import (
 )
 
 type File struct {
-	repo repository.FileRepository
+	repo    repository.FileRepository
+	storage FileStorage
 }
 
-func MustNewFile(repo repository.FileRepository) *File {
-	return &File{repo: repo}
+func MustNewFile(repo repository.FileRepository, storage FileStorage) *File {
+	return &File{
+		repo:    repo,
+		storage: storage,
+	}
 }
 
 func (f File) CheckFile(entry *domain.File) error {
 	extension := filepath.Ext(entry.FilePath)
-	if extension != ".csv" {
+	if extension != ".json" {
 		return errors.New("file not supported. Must be .csv")
 	}
 
@@ -33,7 +37,13 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) error {
 		return err
 	}
 
-	entry.ID = uuid.New().String()
+	id := uuid.New().String()
+	entry.ID = id
+	url, err := f.storage.CreateSignedURL(ctx, id)
+	if err != nil {
+		return err
+	}
+	entry.FilePath = url
 
 	err = f.repo.CreateFile(ctx, entry)
 	if err != nil {

@@ -1,18 +1,19 @@
 package storage
 
 import (
-	"cloud.google.com/go/storage"
 	"context"
-	"github.com/pkg/errors"
 	"time"
+
+	"cloud.google.com/go/storage"
+	"github.com/pkg/errors"
 )
 
 type Storage struct {
-	ProjectID string
-	StorageID string
+	ProjectID      string
+	StorageID      string
 	expirationTime int
-	allowedType string
-	bucketHandle *storage.BucketHandle
+	allowedType    string
+	bucketHandle   *storage.BucketHandle
 }
 
 func NewStorage(ctx context.Context, projectID, storageID string, expirationTime int, allowedType string) (Storage, error) {
@@ -25,11 +26,11 @@ func NewStorage(ctx context.Context, projectID, storageID string, expirationTime
 	}
 	bkt := c.Bucket(storageID)
 	return Storage{
-		ProjectID: projectID,
-		StorageID: storageID,
+		ProjectID:      projectID,
+		StorageID:      storageID,
 		expirationTime: expirationTime,
-		allowedType: allowedType,
-		bucketHandle: bkt,
+		allowedType:    allowedType,
+		bucketHandle:   bkt,
 	}, nil
 }
 
@@ -44,8 +45,9 @@ func MustNewStorage(ctx context.Context, projectID, storageID string, expiration
 func (s Storage) CreateSignedURL(ctx context.Context, fileID string) (string, error) {
 	et := time.Now().Add(time.Duration(s.expirationTime))
 	u, err := s.bucketHandle.SignedURL(fileID, &storage.SignedURLOptions{
-			Expires: et,
-			ContentType: s.allowedType,
+		Expires:     et,
+		ContentType: s.allowedType,
+		Method:      "POST",
 	})
 	if err != nil {
 		return "", errors.Wrap(err, "couldn't generate signedUrl")

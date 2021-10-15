@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
+
 	"github.com/ditointernet/tradulab-service/adapters"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/ditointernet/tradulab-service/internal/repository"
 	"github.com/ditointernet/tradulab-service/internal/rest"
+	"github.com/ditointernet/tradulab-service/internal/storage"
 )
 
 func main() {
@@ -32,10 +35,14 @@ func main() {
 	}
 
 	fRepository := repository.MustNewFile(sql)
-	// 	storage := storage.MustNewStorage(context.Background(), env.ProjectID, env.BucketName, env.ExpirationTime, env.AllowedType )
-	fService := services.MustNewFile(fRepository)
-
-
+	storage := storage.MustNewStorage(
+		context.Background(),
+		env.ProjectID,
+		env.BucketName,
+		env.ExpirationTime,
+		env.AllowedType,
+	)
+	fService := services.MustNewFile(fRepository, storage)
 
 	router := server.Listen()
 	// rPhrase := rest.MustNewPhrase()
