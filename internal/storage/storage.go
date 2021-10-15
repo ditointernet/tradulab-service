@@ -47,7 +47,7 @@ func (s Storage) CreateSignedURL(ctx context.Context, fileID string) (string, er
 	u, err := s.bucketHandle.SignedURL(fileID, &storage.SignedURLOptions{
 		Expires:     et,
 		ContentType: s.allowedType,
-		Method:      "POST",
+		Method:      "PUT",
 	})
 	if err != nil {
 		return "", errors.Wrap(err, "couldn't generate signedUrl")
