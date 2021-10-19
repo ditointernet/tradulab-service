@@ -41,7 +41,7 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) error {
 	entry.ID = id
 	url, err := f.storage.CreateSignedURL(ctx, id)
 	if err != nil {
-		return err
+		return errors.Unwrap(err)
 	}
 	entry.FilePath = url
 
