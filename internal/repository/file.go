@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -23,8 +24,10 @@ func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
-		Status:    "CREATED",
+		Status:    driven.CREATED,
 	}
+
+	fmt.Println("-------------------", driven.CREATED)
 
 	_, err := d.cli.ExecContext(
 		ctx,
