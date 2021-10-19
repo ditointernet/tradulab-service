@@ -2,8 +2,9 @@ package services
 
 import (
 	"context"
-	"errors"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/repository"
@@ -41,7 +42,7 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) error {
 	entry.ID = id
 	url, err := f.storage.CreateSignedURL(ctx, id)
 	if err != nil {
-		return errors.Unwrap(err)
+		return errors.Wrap(err, "couldn't create SignedURL")
 	}
 	entry.FilePath = url
 
