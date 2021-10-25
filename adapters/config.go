@@ -16,6 +16,7 @@ type Config struct {
 	BucketName     string
 	AllowedType    string
 	ExpirationTime int
+	Credentials    string
 }
 
 func GoDotEnvVariable() (*Config, error) {
@@ -32,6 +33,7 @@ func GoDotEnvVariable() (*Config, error) {
 		BucketName:     os.Getenv("BUCKET_NAME"),
 		AllowedType:    os.Getenv("ALLOWED_TYPE"),
 		ExpirationTime: expTime,
+		Credentials:    os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"),
 	}
 
 	return c, nil
