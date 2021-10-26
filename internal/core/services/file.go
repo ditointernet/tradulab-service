@@ -9,15 +9,16 @@ import (
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/repository"
+	"github.com/ditointernet/tradulab-service/internal/storage"
 	"github.com/google/uuid"
 )
 
 type File struct {
 	repo    repository.FileRepository
-	storage FileStorage
+	storage storage.FileStorage
 }
 
-func MustNewFile(repo repository.FileRepository, storage FileStorage) *File {
+func MustNewFile(repo repository.FileRepository, storage storage.FileStorage) *File {
 	return &File{
 		repo:    repo,
 		storage: storage,
@@ -93,4 +94,18 @@ func (f *File) EditFile(ctx context.Context, entry *domain.File) error {
 	}
 
 	return nil
+}
+
+func (f *File) CreateSignedURL(ctx context.Context, fileID string) (string, error) {
+	err := f.findFile(ctx, fileID)
+	if err != nil {
+		return "", err
+	}
+
+	url, err := f.storage.CreateSignedURL(ctx, fileID)
+	if err != nil {
+		return "", errors.Wrap(err, "couldn't create SignedURL")
+	}
+
+	return url, nil
 }

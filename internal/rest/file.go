@@ -100,3 +100,20 @@ func (f File) EditFile(ctx *gin.Context) {
 		"id":      file.ID,
 	})
 }
+
+func (f File) CreateSignedURL(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	url, err := f.in.File.CreateSignedURL(ctx, id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"ID":  id,
+		"url": url,
+	})
+}
