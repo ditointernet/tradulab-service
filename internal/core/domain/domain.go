@@ -5,6 +5,7 @@ type File struct {
 	ProjectID string
 	FilePath  string
 	FileName  string
+	Status    string
 }
 
 type Phrase struct {
