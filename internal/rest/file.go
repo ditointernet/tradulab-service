@@ -42,7 +42,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FilePath:  body.FilePath,
 	}
 
-	err = f.in.File.CreateFile(ctx, file)
+	newFile, err := f.in.File.CreateFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -52,8 +52,8 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "File successfully created",
-		"id":      file.ID,
-		"url":     file.FilePath,
+		"id":      newFile.ID,
+		"url":     newFile.FilePath,
 	})
 }
 

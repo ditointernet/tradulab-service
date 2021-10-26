@@ -19,7 +19,7 @@ func MustNewFile(db *sql.DB) *File {
 	}
 }
 
-func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
+func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,

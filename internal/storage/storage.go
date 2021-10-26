@@ -20,6 +20,11 @@ func NewStorage(ctx context.Context, projectID, storageID string, expirationTime
 	if projectID == "" {
 		return Storage{}, errors.New("missing projectID dependency")
 	}
+
+	if storageID == "" || expirationTime == 0 || allowedType == "" {
+		return Storage{}, errors.New("missing environment variables dependency")
+	}
+
 	c, err := storage.NewClient(ctx)
 	if err != nil {
 		return Storage{}, errors.Wrap(err, "couldn't create storage client")

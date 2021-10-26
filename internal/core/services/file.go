@@ -32,26 +32,30 @@ func (f File) CheckFile(entry *domain.File) error {
 	return nil
 }
 
-func (f *File) CreateFile(ctx context.Context, entry *domain.File) error {
+func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File, error) {
 	err := f.CheckFile(entry)
 	if err != nil {
-		return err
+		return domain.File{}, err
 	}
 
 	id := uuid.New().String()
-	entry.ID = id
+
 	url, err := f.storage.CreateSignedURL(ctx, id)
 	if err != nil {
-		return errors.Wrap(err, "couldn't create SignedURL")
+		return domain.File{}, errors.Wrap(err, "couldn't create SignedURL")
 	}
-	entry.FilePath = url
+	newFile := domain.File{
+		ID:        id,
+		ProjectID: entry.ProjectID,
+		FilePath:  url,
+	}
 
-	err = f.repo.CreateFile(ctx, entry)
+	err = f.repo.CreateFile(ctx, newFile)
 	if err != nil {
-		return err
+		return domain.File{}, err
 	}
 
-	return nil
+	return newFile, nil
 }
 
 func (f File) findFile(ctx context.Context, id string) error {
