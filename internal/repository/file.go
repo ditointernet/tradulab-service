@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -56,8 +55,6 @@ func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 		}
 
 		files = append(files, file)
-
-		fmt.Println(files, "aaaaaaa")
 	}
 
 	return files, nil
