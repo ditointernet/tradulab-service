@@ -40,7 +40,7 @@ func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, file_path FROM files") // tem que arrrumar esse filePath
+	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files") // tem que arrrumar esse filePath
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	for allFiles.Next() {
 		var file domain.File
 
-		err = allFiles.Scan(&file.ID, &file.ProjectID, &file.FilePath)
+		err = allFiles.Scan(&file.ID, &file.ProjectID, &file.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -80,15 +80,15 @@ func (d *File) FindFile(ctx context.Context, id string) error {
 
 func (d *File) EditFile(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
-		ID:       file.ID,
-		FilePath: file.FilePath,
+		ID: file.ID,
+		//FilePath: file.FilePath,
 	}
 
 	_, err := d.cli.ExecContext(
 		ctx,
 		"UPDATE files SET file_path = $2 WHERE id = $1",
 		dto.ID,
-		dto.FilePath,
+		//dto.FilePath,
 	)
 
 	return err
