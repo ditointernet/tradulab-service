@@ -57,6 +57,7 @@ func main() {
 	router.POST("/file", rFile.CreateFile)
 	router.GET("/file", rFile.GetAllFiles)
 	router.PUT("/file/:id", rFile.EditFile)
+	router.GET("/file/:id", rFile.CreateSignedURL)
 
 	router.Run()
 }

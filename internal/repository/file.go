@@ -19,19 +19,19 @@ func MustNewFile(db *sql.DB) *File {
 	}
 }
 
-func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
+func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
-		FilePath:  file.FilePath,
+		Status:    driven.CREATED,
 	}
 
 	_, err := d.cli.ExecContext(
 		ctx,
-		"INSERT into files (id, project_id, file_path) values ($1, $2, $3)",
+		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
 		dto.ID,
 		dto.ProjectID,
-		dto.FilePath,
+		dto.Status,
 	)
 
 	return err
@@ -40,7 +40,7 @@ func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
 func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, file_path FROM files")
+	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, file_path FROM files") // tem que arrrumar esse filePath
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (d *File) FindFile(ctx context.Context, id string) error {
 	err := d.cli.QueryRowContext(
 		ctx,
 		"SELECT id, project_id, file_path FROM files WHERE id = $1",
-		id).Scan(&file.ID, &file.ProjectID, &file.FilePath)
+		id).Scan(&file.ID, &file.ProjectID, &file.FilePath) //tem que arrrumar esse filePath
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New("file not found")

@@ -2,55 +2,66 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/repository"
+	"github.com/ditointernet/tradulab-service/internal/storage"
 	"github.com/google/uuid"
 )
 
 type File struct {
 	repo    repository.FileRepository
-	storage FileStorage
+	storage storage.FileStorage
 }
 
-func MustNewFile(repo repository.FileRepository, storage FileStorage) *File {
+func MustNewFile(repo repository.FileRepository, storage storage.FileStorage) *File {
 	return &File{
 		repo:    repo,
 		storage: storage,
 	}
 }
 
-func (f File) CheckFile(entry *domain.File) error {
-	extension := filepath.Ext(entry.FilePath)
+func (f File) CheckExtension(extension string) error {
 	if extension != ".json" {
-		return errors.New("file not supported. Must be .csv")
+		return errors.New("file not supported. Must be .json")
 	}
 
 	return nil
 }
 
-func (f *File) CreateFile(ctx context.Context, entry *domain.File) error {
-	err := f.CheckFile(entry)
+func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File, error) {
+	extension := filepath.Ext(entry.FileName)
+	err := f.CheckExtension(extension)
 	if err != nil {
-		return err
+		return domain.File{}, err
 	}
 
 	id := uuid.New().String()
-	entry.ID = id
-	url, err := f.storage.CreateSignedURL(ctx, id)
-	if err != nil {
-		return errors.Unwrap(err)
-	}
-	entry.FilePath = url
 
-	err = f.repo.CreateFile(ctx, entry)
+	fileName := fmt.Sprintf("%s%s", id, extension)
+
+	url, err := f.storage.CreateSignedURL(ctx, fileName)
 	if err != nil {
-		return err
+		return domain.File{}, errors.Wrap(err, "couldn't create SignedURL")
 	}
 
-	return nil
+	newFile := domain.File{
+		ID:        id,
+		ProjectID: entry.ProjectID,
+		FilePath:  url,
+		FileName:  fileName,
+	}
+
+	err = f.repo.CreateFile(ctx, newFile)
+	if err != nil {
+		return domain.File{}, err
+	}
+
+	return newFile, nil
 }
 
 func (f File) findFile(ctx context.Context, id string) error {
@@ -83,4 +94,18 @@ func (f *File) EditFile(ctx context.Context, entry *domain.File) error {
 	}
 
 	return nil
+}
+
+func (f *File) CreateSignedURL(ctx context.Context, fileID string) (string, error) {
+	err := f.findFile(ctx, fileID)
+	if err != nil {
+		return "", err
+	}
+
+	url, err := f.storage.CreateSignedURL(ctx, fileID)
+	if err != nil {
+		return "", errors.Wrap(err, "couldn't create SignedURL")
+	}
+
+	return url, nil
 }
