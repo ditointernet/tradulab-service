@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -23,31 +24,35 @@ func MustNewFile(repo repository.FileRepository, storage FileStorage) *File {
 	}
 }
 
-func (f File) CheckFile(entry *domain.File) error {
-	extension := filepath.Ext(entry.FilePath)
+func (f File) CheckExtension(extension string) error {
 	if extension != ".json" {
-		return errors.New("file not supported. Must be .csv")
+		return errors.New("file not supported. Must be .json")
 	}
 
 	return nil
 }
 
 func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File, error) {
-	err := f.CheckFile(entry)
+	extension := filepath.Ext(entry.FileName)
+	err := f.CheckExtension(extension)
 	if err != nil {
 		return domain.File{}, err
 	}
 
 	id := uuid.New().String()
 
-	url, err := f.storage.CreateSignedURL(ctx, id)
+	fileName := fmt.Sprintf("%s%s", id, extension)
+
+	url, err := f.storage.CreateSignedURL(ctx, fileName)
 	if err != nil {
 		return domain.File{}, errors.Wrap(err, "couldn't create SignedURL")
 	}
+
 	newFile := domain.File{
 		ID:        id,
 		ProjectID: entry.ProjectID,
 		FilePath:  url,
+		FileName:  fileName,
 	}
 
 	err = f.repo.CreateFile(ctx, newFile)

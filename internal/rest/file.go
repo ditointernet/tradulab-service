@@ -39,7 +39,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	file := &domain.File{
 		ProjectID: body.ProjectID,
-		FilePath:  body.FilePath,
+		FileName:  body.FileName,
 	}
 
 	newFile, err := f.in.File.CreateFile(ctx, file)
