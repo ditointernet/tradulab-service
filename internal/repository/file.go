@@ -65,8 +65,8 @@ func (d *File) FindFile(ctx context.Context, id string) error {
 
 	err := d.cli.QueryRowContext(
 		ctx,
-		"SELECT id, project_id, file_path FROM files WHERE id = $1",
-		id).Scan(&file.ID, &file.ProjectID, &file.FilePath)
+		"SELECT id, project_id FROM files WHERE id = $1",
+		id).Scan(&file.ID, &file.ProjectID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New("file not found")
@@ -80,15 +80,15 @@ func (d *File) FindFile(ctx context.Context, id string) error {
 
 func (d *File) EditFile(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
-		ID:       file.ID,
-		FilePath: file.FilePath,
+		ID:     file.ID,
+		Status: "SUCCESS",
 	}
 
 	_, err := d.cli.ExecContext(
 		ctx,
-		"UPDATE files SET file_path = $2 WHERE id = $1",
+		"UPDATE files SET status = $2 WHERE id = $1",
 		dto.ID,
-		dto.FilePath,
+		dto.Status,
 	)
 
 	return err

@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -71,32 +72,15 @@ func (f File) GetAllFiles(ctx *gin.Context) {
 	})
 }
 
-func (f File) EditFile(ctx *gin.Context) {
-	body := &drivers.File{}
-	err := ctx.ShouldBindJSON(body)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	id := ctx.Param("id")
+func (f File) EditFile(ctx context.Context, id string) error {
 	file := &domain.File{
-		ID:       id,
-		FilePath: body.FilePath,
+		ID: id,
 	}
 
-	err = f.in.File.EditFile(ctx, file)
+	err := f.in.File.EditFile(ctx, file)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
+		return err
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "File successfully edited",
-		"id":      file.ID,
-	})
+	return nil
 }
