@@ -3,8 +3,8 @@ package domain
 type File struct {
 	ID        string
 	ProjectID string
-	FilePath  string
-	FileName  string
+	FilePath  string `json:",omitempty"`
+	FileName  string `json:",omitempty"`
 	Status    string
 }
 
