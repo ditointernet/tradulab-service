@@ -79,7 +79,7 @@ func (f File) EditFile(ctx *gin.Context) {
 
 	err := f.in.File.EditFile(ctx, file)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
