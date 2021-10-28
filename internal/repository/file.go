@@ -60,7 +60,7 @@ func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	return files, nil
 }
 
-func (d *File) FindFile(ctx context.Context, id string) error {
+func (d *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	var file domain.File
 
 	err := d.cli.QueryRowContext(
@@ -69,13 +69,13 @@ func (d *File) FindFile(ctx context.Context, id string) error {
 		id).Scan(&file.ID, &file.ProjectID, &file.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return errors.New("file not found")
+			return domain.File{}, errors.New("file not found")
 		}
-		return err
+		return domain.File{}, err
 
 	}
 
-	return nil
+	return file, nil
 }
 
 func (d *File) EditFile(ctx context.Context, file *domain.File) error {

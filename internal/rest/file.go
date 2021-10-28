@@ -94,7 +94,22 @@ func (f File) EditFile(ctx *gin.Context) {
 func (f File) CreateSignedURL(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	url, err := f.in.File.CreateSignedURL(ctx, id)
+	body := &drivers.File{}
+
+	err := ctx.ShouldBindJSON(body)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	file := &domain.File{
+		ID:       id,
+		FileName: body.FileName,
+	}
+
+	url, err := f.in.File.CreateSignedURL(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
