@@ -7,11 +7,8 @@ import (
 )
 
 type FileHandler interface {
-	CreateFile(ctx context.Context, file *domain.File) error
+	CreateFile(ctx context.Context, file *domain.File) (domain.File, error)
 	EditFile(ctx context.Context, file *domain.File) error
 	GetFiles(ctx context.Context) ([]domain.File, error)
-}
-
-type FileStorage interface {
-	CreateSignedURL(ctx context.Context, fileID string) (string, error)
+	CreateSignedURL(ctx context.Context, file *domain.File) (string, error)
 }

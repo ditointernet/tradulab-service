@@ -19,19 +19,19 @@ func MustNewFile(db *sql.DB) *File {
 	}
 }
 
-func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
+func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
-		FilePath:  file.FilePath,
+		Status:    driven.CREATED,
 	}
 
 	_, err := d.cli.ExecContext(
 		ctx,
-		"INSERT into files (id, project_id, file_path) values ($1, $2, $3)",
+		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
 		dto.ID,
 		dto.ProjectID,
-		dto.FilePath,
+		dto.Status,
 	)
 
 	return err
@@ -40,7 +40,7 @@ func (d *File) CreateFile(ctx context.Context, file *domain.File) error {
 func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, file_path FROM files")
+	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files") // tem que arrrumar esse filePath
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	for allFiles.Next() {
 		var file domain.File
 
-		err = allFiles.Scan(&file.ID, &file.ProjectID, &file.FilePath)
+		err = allFiles.Scan(&file.ID, &file.ProjectID, &file.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -60,35 +60,35 @@ func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	return files, nil
 }
 
-func (d *File) FindFile(ctx context.Context, id string) error {
+func (d *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	var file domain.File
 
 	err := d.cli.QueryRowContext(
 		ctx,
-		"SELECT id, project_id, file_path FROM files WHERE id = $1",
-		id).Scan(&file.ID, &file.ProjectID, &file.FilePath)
+		"SELECT id, project_id, status FROM files WHERE id = $1",
+		id).Scan(&file.ID, &file.ProjectID, &file.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return errors.New("file not found")
+			return domain.File{}, errors.New("file not found")
 		}
-		return err
+		return domain.File{}, err
 
 	}
 
-	return nil
+	return file, nil
 }
 
 func (d *File) EditFile(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
-		ID:       file.ID,
-		FilePath: file.FilePath,
+		ID:     file.ID,
+		Status: driven.SUCCESS,
 	}
 
 	_, err := d.cli.ExecContext(
 		ctx,
-		"UPDATE files SET file_path = $2 WHERE id = $1",
+		"UPDATE files SET status = $2 WHERE id = $1",
 		dto.ID,
-		dto.FilePath,
+		dto.Status,
 	)
 
 	return err
