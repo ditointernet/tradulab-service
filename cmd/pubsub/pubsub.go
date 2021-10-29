@@ -2,22 +2,21 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/ditointernet/tradulab-service/adapters"
-	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
+	"github.com/ditointernet/tradulab-service/internal/handler"
 	"github.com/ditointernet/tradulab-service/internal/repository"
 	"github.com/ditointernet/tradulab-service/internal/rest"
 	"github.com/ditointernet/tradulab-service/internal/storage"
 	"google.golang.org/api/option"
 )
 
-type FileName struct {
-	Name string
-}
+// type FileName struct {
+// 	Name string
+// }
 
 func main() {
 	env, err := adapters.GoDotEnvVariable()
@@ -72,23 +71,11 @@ func main() {
 	sub.ReceiveSettings.Synchronous = true
 	sub.ReceiveSettings.MaxOutstandingMessages = 1
 	err = sub.Receive(ctx, func(c context.Context, m *pubsub.Message) {
-		fmt.Println("new message received")
-		var fileName FileName
-
-		data := m.Data
-
-		err := json.Unmarshal(data, &fileName)
+		message := handler.MustNewMessage(m, *rFile)
+		err := message.HandleMessage(c)
 		if err != nil {
 			panic(err)
 		}
-
-		file := &domain.File{
-			ID: fileName.Name,
-		}
-
-		rFile.EditFile(ctx, file.ID)
-		fmt.Println("file uploaded")
-		m.Ack()
 	})
 	if err != nil {
 		panic(err)
