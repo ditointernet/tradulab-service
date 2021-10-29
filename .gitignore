@@ -24,3 +24,7 @@
 
 #env
 .env
+
+#credentials
+application_default_credentials.json
+serviceAccount.json
