@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/ditointernet/tradulab-service/adapters"
@@ -13,10 +14,6 @@ import (
 	"github.com/ditointernet/tradulab-service/internal/storage"
 	"google.golang.org/api/option"
 )
-
-// type FileName struct {
-// 	Name string
-// }
 
 func main() {
 	env, err := adapters.GoDotEnvVariable()
@@ -63,10 +60,10 @@ func main() {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, cred.ProjectID, option.WithCredentialsFile(cred.Credentials))
 	if err != nil {
-		panic(err)
+		fmt.Println("Couldn't create a new client", err.Error())
 	}
 
-	fmt.Println("Listening to subscription")
+	log.Println("Listening to subscription")
 	sub := client.Subscription("files-topic-sub")
 	sub.ReceiveSettings.Synchronous = true
 	sub.ReceiveSettings.MaxOutstandingMessages = 1
@@ -74,10 +71,10 @@ func main() {
 		message := handler.MustNewMessage(m, *rFile)
 		err := message.HandleMessage(c)
 		if err != nil {
-			panic(err)
+			fmt.Println("Couldn't handle message", err.Error())
 		}
 	})
 	if err != nil {
-		panic(err)
+		fmt.Println("Error receiving message", err.Error())
 	}
 }

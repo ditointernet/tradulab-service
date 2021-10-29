@@ -3,7 +3,8 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"log"
+	"strings"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -27,7 +28,7 @@ func MustNewMessage(message *pubsub.Message, rFile rest.File) *Message {
 }
 
 func (m Message) HandleMessage(ctx context.Context) error {
-	fmt.Println("new message received")
+	log.Println("new message received")
 	var fileName FileName
 
 	data := m.Message.Data
@@ -37,8 +38,10 @@ func (m Message) HandleMessage(ctx context.Context) error {
 		return err
 	}
 
+	filename := strings.Split(fileName.Name, ".")
+
 	file := &domain.File{
-		ID: fileName.Name,
+		ID: filename[0],
 	}
 
 	err = m.rFile.EditFile(ctx, file.ID)
@@ -46,7 +49,7 @@ func (m Message) HandleMessage(ctx context.Context) error {
 		return err
 	}
 
-	fmt.Println("file uploaded")
+	log.Println("file uploaded")
 
 	m.Message.Ack()
 	return nil
