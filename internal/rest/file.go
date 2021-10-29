@@ -40,10 +40,10 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	file := &domain.File{
 		ProjectID: body.ProjectID,
-		FilePath:  body.FilePath,
+		FileName:  body.FileName,
 	}
 
-	err = f.in.File.CreateFile(ctx, file)
+	newFile, err := f.in.File.CreateFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -53,8 +53,8 @@ func (f File) CreateFile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "File successfully created",
-		"id":      file.ID,
-		"url":     file.FilePath,
+		"id":      newFile.ID,
+		"url":     newFile.FilePath,
 	})
 }
 
@@ -83,4 +83,36 @@ func (f File) EditFile(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (f File) CreateSignedURL(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	body := &drivers.File{}
+
+	err := ctx.ShouldBindJSON(body)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	file := &domain.File{
+		ID:       id,
+		FileName: body.FileName,
+	}
+
+	url, err := f.in.File.CreateSignedURL(ctx, file)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"ID":  id,
+		"url": url,
+	})
 }

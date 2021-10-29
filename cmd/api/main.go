@@ -56,6 +56,7 @@ func main() {
 	// router.GET("/:id", rPhrase.FindByID)
 	router.POST("/file", rFile.CreateFile)
 	router.GET("/file", rFile.GetAllFiles)
+	router.POST("/file/:id/signed-url", rFile.CreateSignedURL)
 
 	router.Run()
 }
