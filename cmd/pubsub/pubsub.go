@@ -8,10 +8,9 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/ditointernet/tradulab-service/adapters"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
-	"github.com/ditointernet/tradulab-service/internal/handler"
 	"github.com/ditointernet/tradulab-service/internal/repository"
-	"github.com/ditointernet/tradulab-service/internal/rest"
 	"github.com/ditointernet/tradulab-service/internal/storage"
+	"github.com/ditointernet/tradulab-service/internal/subscriber"
 	"google.golang.org/api/option"
 )
 
@@ -45,31 +44,26 @@ func main() {
 	)
 	fService := services.MustNewFile(fRepository, storage)
 
-	rFile, err := rest.NewFile(rest.ServiceInput{
-		File: fService,
-	})
-	if err != nil {
-		panic(err)
-	}
-
 	cred := &adapters.Config{
-		Credentials: env.Credentials,
-		ProjectID:   env.ProjectID,
+		Credentials:  env.Credentials,
+		ProjectID:    env.ProjectID,
+		Subscription: env.Subscription,
 	}
 
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, cred.ProjectID, option.WithCredentialsFile(cred.Credentials))
 	if err != nil {
-		fmt.Println("Couldn't create a new client", err.Error())
+		panic(err)
 	}
 
 	log.Println("Listening to subscription")
-	sub := client.Subscription("files-topic-sub")
+	sub := client.Subscription(cred.Subscription)
 	sub.ReceiveSettings.Synchronous = true
 	sub.ReceiveSettings.MaxOutstandingMessages = 1
 	err = sub.Receive(ctx, func(c context.Context, m *pubsub.Message) {
-		message := handler.MustNewMessage(m, *rFile)
-		err := message.HandleMessage(c)
+		message := subscriber.MustNewSubscriber(*fService)
+		fmt.Println(m, "------")
+		err := message.HandleMessage(c, m)
 		if err != nil {
 			fmt.Println("Couldn't handle message", err.Error())
 		}

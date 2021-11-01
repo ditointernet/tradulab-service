@@ -17,6 +17,7 @@ type Config struct {
 	AllowedType    string
 	ExpirationTime int
 	Credentials    string
+	Subscription   string
 }
 
 func GoDotEnvVariable() (*Config, error) {
@@ -34,6 +35,7 @@ func GoDotEnvVariable() (*Config, error) {
 		AllowedType:    os.Getenv("ALLOWED_TYPE"),
 		ExpirationTime: expTime,
 		Credentials:    os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"),
+		Subscription:   os.Getenv("SUBSCRIPTION"),
 	}
 
 	return c, nil

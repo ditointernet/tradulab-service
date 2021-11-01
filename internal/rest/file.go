@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -70,19 +69,6 @@ func (f File) GetAllFiles(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"files": files,
 	})
-}
-
-func (f File) EditFile(ctx context.Context, id string) error {
-	file := &domain.File{
-		ID: id,
-	}
-
-	err := f.in.File.EditFile(ctx, file)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (f File) CreateSignedURL(ctx *gin.Context) {

@@ -1,38 +1,37 @@
-package handler
+package subscriber
 
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strings"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
-	"github.com/ditointernet/tradulab-service/internal/rest"
+	"github.com/ditointernet/tradulab-service/internal/core/services"
 )
 
-type Message struct {
-	Message *pubsub.Message
-	rFile   rest.File
+type Subscriber struct {
+	sFile services.File
 }
 
 type FileName struct {
 	Name string
 }
 
-func MustNewMessage(message *pubsub.Message, rFile rest.File) *Message {
-	return &Message{
-		Message: message,
-		rFile:   rFile,
+func MustNewSubscriber(sFile services.File) *Subscriber {
+	return &Subscriber{
+		sFile: sFile,
 	}
 }
 
-func (m Message) HandleMessage(ctx context.Context) error {
+func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error {
 	log.Println("new message received")
 	var fileName FileName
 
-	data := m.Message.Data
-
+	data := m.Data
+	fmt.Println(string(data))
 	err := json.Unmarshal(data, &fileName)
 	if err != nil {
 		return err
@@ -44,13 +43,13 @@ func (m Message) HandleMessage(ctx context.Context) error {
 		ID: filename[0],
 	}
 
-	err = m.rFile.EditFile(ctx, file.ID)
+	err = s.sFile.EditFile(ctx, file)
 	if err != nil {
 		return err
 	}
 
 	log.Println("file uploaded")
 
-	m.Message.Ack()
+	m.Ack()
 	return nil
 }
