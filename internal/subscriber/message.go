@@ -3,7 +3,6 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 
@@ -31,7 +30,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 	var fileName FileName
 
 	data := m.Data
-	fmt.Println(string(data))
+
 	err := json.Unmarshal(data, &fileName)
 	if err != nil {
 		return err
