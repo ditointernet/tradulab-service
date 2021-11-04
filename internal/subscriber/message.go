@@ -43,7 +43,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 		ID: filename[0],
 	}
 
-	err = s.sFile.EditFile(ctx, file)
+	err = s.sFile.UpdateFileStatus(ctx, file)
 	if err != nil {
 		m.Nack()
 		return err

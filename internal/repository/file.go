@@ -78,7 +78,7 @@ func (d *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	return file, nil
 }
 
-func (d *File) EditFile(ctx context.Context, file *domain.File) error {
+func (d *File) UpdateFileStatus(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
 		ID:     file.ID,
 		Status: driven.SUCCESS,
