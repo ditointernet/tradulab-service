@@ -33,6 +33,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 
 	err := json.Unmarshal(data, &fileName)
 	if err != nil {
+		m.Nack()
 		return err
 	}
 
@@ -44,6 +45,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 
 	err = s.sFile.EditFile(ctx, file)
 	if err != nil {
+		m.Nack()
 		return err
 	}
 
