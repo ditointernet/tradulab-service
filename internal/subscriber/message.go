@@ -33,7 +33,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 
 	err := json.Unmarshal(data, &fileName)
 	if err != nil {
-		m.Nack()
+		m.Ack()
 		return err
 	}
 
