@@ -32,6 +32,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 	data := m.Data
 	err := json.Unmarshal(data, &fileName)
 	if err != nil {
+		m.Ack()
 		return err
 	}
 
@@ -41,8 +42,9 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 		ID: filename[0],
 	}
 
-	err = s.sFile.EditFile(ctx, file)
+	err = s.sFile.SetUploadSuccessful(ctx, file)
 	if err != nil {
+		m.Nack()
 		return err
 	}
 
