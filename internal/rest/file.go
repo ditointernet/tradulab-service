@@ -71,26 +71,6 @@ func (f File) GetAllFiles(ctx *gin.Context) {
 	})
 }
 
-func (f File) EditFile(ctx *gin.Context) {
-	id := ctx.Param("id")
-	file := &domain.File{
-		ID: id,
-	}
-
-	err := f.in.File.EditFile(ctx, file)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "File successfully uploaded",
-		"id":      file.ID,
-	})
-}
-
 func (f File) CreateSignedURL(ctx *gin.Context) {
 	id := ctx.Param("id")
 
