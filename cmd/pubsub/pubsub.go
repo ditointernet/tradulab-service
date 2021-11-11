@@ -62,7 +62,7 @@ func main() {
 	sub.ReceiveSettings.MaxOutstandingMessages = 1
 	message := subscriber.MustNewSubscriber(*fService)
 	err = sub.Receive(ctx, func(c context.Context, m *pubsub.Message) {
-		err := message.HandleMessage(c, m)
+		err := message.HandleMessage(c, m, storage)
 		if err != nil {
 			fmt.Println("Couldn't handle message", err.Error())
 		}

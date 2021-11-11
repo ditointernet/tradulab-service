@@ -3,12 +3,15 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
+	"github.com/ditointernet/tradulab-service/internal/storage"
 )
 
 type Subscriber struct {
@@ -25,7 +28,7 @@ func MustNewSubscriber(sFile services.File) *Subscriber {
 	}
 }
 
-func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error {
+func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message, strg storage.Storage) error {
 	log.Println("new message received")
 	var fileName FileName
 
@@ -47,9 +50,31 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 		m.Nack()
 		return err
 	}
-
 	log.Println("file uploaded")
 
+	err = DownloadDoc(ctx, fileName.Name, strg)
+
+	if err != nil {
+		return err
+	}
+
 	m.Ack()
+	return nil
+}
+
+func DownloadDoc(ctx context.Context, docName string, strg storage.Storage) error {
+	rc, err := strg.BucketHandle.Object(docName).NewReader(ctx)
+	if err != nil {
+		return err
+	}
+	defer rc.Close()
+
+	d, err := ioutil.ReadAll(rc)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Blob %s downloaded.\n", docName)
+	fmt.Println(string(d))
+
 	return nil
 }
