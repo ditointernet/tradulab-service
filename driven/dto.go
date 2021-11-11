@@ -10,3 +10,9 @@ type File struct {
 	ProjectID string
 	Status    FileStatus
 }
+
+type Phrase struct {
+	FileID  string
+	Key     string `gorm:"primaryKey"`
+	Content string
+}

@@ -3,28 +3,29 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"strings"
 
 	"cloud.google.com/go/pubsub"
+	googleStorage "cloud.google.com/go/storage"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/ditointernet/tradulab-service/internal/storage"
 )
 
 type Subscriber struct {
-	sFile services.File
+	sFile   services.File
+	handler Handler
 }
 
 type FileName struct {
 	Name string
 }
 
-func MustNewSubscriber(sFile services.File) *Subscriber {
+func MustNewSubscriber(sFile services.File, handler Handler) *Subscriber {
 	return &Subscriber{
-		sFile: sFile,
+		sFile:   sFile,
+		handler: handler,
 	}
 }
 
@@ -52,29 +53,22 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message, strg s
 	}
 	log.Println("file uploaded")
 
-	err = DownloadDoc(ctx, fileName.Name, strg)
-
+	rc, err := DownloadDoc(ctx, fileName.Name, strg)
 	if err != nil {
 		return err
 	}
+	s.handler.Process(ctx, rc, file.ID)
 
 	m.Ack()
 	return nil
 }
 
-func DownloadDoc(ctx context.Context, docName string, strg storage.Storage) error {
+func DownloadDoc(ctx context.Context, docName string, strg storage.Storage) (*googleStorage.Reader, error) {
 	rc, err := strg.BucketHandle.Object(docName).NewReader(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer rc.Close()
 
-	d, err := ioutil.ReadAll(rc)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Blob %s downloaded.\n", docName)
-	fmt.Println(string(d))
-
-	return nil
+	return rc, nil
 }

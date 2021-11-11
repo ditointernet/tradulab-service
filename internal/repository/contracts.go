@@ -12,3 +12,7 @@ type FileRepository interface {
 	SetUploadSuccessful(ctx context.Context, file *domain.File) error
 	GetFiles(ctx context.Context) ([]domain.File, error)
 }
+
+type PhraseRepository interface {
+	CreatePhrase(ctx context.Context, file domain.Phrase) error
+}
