@@ -9,6 +9,7 @@ type File struct {
 }
 
 type Phrase struct {
+	ID      string
 	FileID  string
 	Key     string
 	Content string

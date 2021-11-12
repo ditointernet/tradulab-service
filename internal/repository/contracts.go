@@ -14,5 +14,7 @@ type FileRepository interface {
 }
 
 type PhraseRepository interface {
-	CreatePhrase(ctx context.Context, file domain.Phrase) error
+	CreatePhrase(ctx context.Context, entry domain.Phrase) error
+	GetPhrase(ctx context.Context, entry domain.Phrase) (domain.Phrase, error)
+	UpdatePhrase(ctx context.Context, entry domain.Phrase) error
 }

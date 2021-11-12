@@ -12,7 +12,8 @@ type File struct {
 }
 
 type Phrase struct {
+	ID      string `gorm:"primaryKey"`
 	FileID  string
-	Key     string `gorm:"primaryKey"`
+	Key     string
 	Content string
 }
