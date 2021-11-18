@@ -37,10 +37,10 @@ func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 	return err
 }
 
-func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
+func (d *File) GetFiles(ctx context.Context, projectId string) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files") // tem que arrrumar esse filePath
+	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files WHERE project_id = $1", projectId) // tem que arrrumar esse filePath
 	if err != nil {
 		return nil, err
 	}

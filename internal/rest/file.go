@@ -58,7 +58,8 @@ func (f File) CreateFile(ctx *gin.Context) {
 }
 
 func (f File) GetAllFiles(ctx *gin.Context) {
-	files, err := f.in.File.GetFiles(ctx)
+	projectId := ctx.Param("projectId")
+	files, err := f.in.File.GetFiles(ctx, projectId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
