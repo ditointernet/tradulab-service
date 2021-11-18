@@ -19,14 +19,14 @@ func MustNewFile(db *sql.DB) *File {
 	}
 }
 
-func (d *File) CreateFile(ctx context.Context, file domain.File) error {
+func (f *File) CreateFile(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
 		Status:    driven.CREATED,
 	}
 
-	_, err := d.cli.ExecContext(
+	_, err := f.cli.ExecContext(
 		ctx,
 		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
 		dto.ID,
@@ -37,10 +37,10 @@ func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 	return err
 }
 
-func (d *File) GetFiles(ctx context.Context, projectId string) ([]domain.File, error) {
+func (f *File) GetFiles(ctx context.Context, projectId string) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files WHERE project_id = $1", projectId) // tem que arrrumar esse filePath
+	allFiles, err := f.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files WHERE project_id = $1", projectId)
 	if err != nil {
 		return nil, err
 	}
@@ -60,10 +60,10 @@ func (d *File) GetFiles(ctx context.Context, projectId string) ([]domain.File, e
 	return files, nil
 }
 
-func (d *File) FindFile(ctx context.Context, id string) (domain.File, error) {
+func (f *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	var file domain.File
 
-	err := d.cli.QueryRowContext(
+	err := f.cli.QueryRowContext(
 		ctx,
 		"SELECT id, project_id, status FROM files WHERE id = $1",
 		id).Scan(&file.ID, &file.ProjectID, &file.Status)
@@ -78,13 +78,13 @@ func (d *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	return file, nil
 }
 
-func (d *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error {
+func (f *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
 		ID:     file.ID,
 		Status: driven.SUCCESS,
 	}
 
-	_, err := d.cli.ExecContext(
+	_, err := f.cli.ExecContext(
 		ctx,
 		"UPDATE files SET status = $2 WHERE id = $1",
 		dto.ID,
@@ -92,4 +92,20 @@ func (d *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error
 	)
 
 	return err
+}
+
+func (f *File) FindProject(ctx context.Context, projecId string) (string, error) {
+	var ProjectID string
+	err := f.cli.QueryRowContext(
+		ctx,
+		"SELECT project_id FROM files WHERE project_id = $1",
+		projecId).Scan(&ProjectID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("file not found")
+		}
+		return "", err
+	}
+
+	return ProjectID, nil
 }
