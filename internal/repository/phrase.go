@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -66,4 +68,36 @@ func (p *Phrase) UpdatePhrase(ctx context.Context, phrase domain.Phrase) error {
 	)
 
 	return err
+}
+
+func (p *Phrase) GetByFileId(ctx context.Context, id string) (domain.Phrase, error) {
+	var phrase domain.Phrase
+
+	err := p.cli.QueryRowContext(
+		ctx,
+		"SELECT key FROM phrases WHERE file_id = $1",
+		id).Scan(&phrase.Key)
+	if err != nil {
+		return domain.Phrase{}, err
+	}
+
+	return phrase, nil
+}
+
+func (p *Phrase) DeletePhrases(ctx context.Context, phrasesKey []string, fileId string) error {
+	list := strings.Join(phrasesKey[:], ", ")
+
+	query := fmt.Sprintf("DELETE FROM phrases WHERE file_id = $1 AND key NOT IN (%s)", list)
+
+	_, err := p.cli.ExecContext(
+		ctx,
+		query,
+		fileId,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

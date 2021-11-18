@@ -35,19 +35,19 @@ func (p *Phrase) VerifyInDB(ctx context.Context, entry *domain.Phrase) error {
 	return err
 }
 
-func (p *Phrase) CreatePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
+func (p *Phrase) HandlePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
+
 	err := p.VerifyInDB(ctx, entry)
 
-	id := uuid.New().String()
-
 	newPhrase := domain.Phrase{
-		ID:      id,
 		FileID:  entry.FileID,
 		Key:     entry.Key,
 		Content: entry.Content,
 	}
 
 	if err != nil && err == sql.ErrNoRows {
+		id := uuid.New().String()
+		newPhrase.ID = id
 		err = p.repo.CreatePhrase(ctx, newPhrase)
 		if err != nil {
 			return domain.Phrase{}, err
@@ -55,4 +55,13 @@ func (p *Phrase) CreatePhrase(ctx context.Context, entry *domain.Phrase) (domain
 	}
 
 	return newPhrase, nil
+}
+
+func (p *Phrase) CleanDB(ctx context.Context, phrasesKey []string, fileId string) error {
+	err := p.repo.DeletePhrases(ctx, phrasesKey, fileId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -3,6 +3,7 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -22,6 +23,7 @@ func MustNewHandler(sPhrase services.Phrase) *Handler {
 }
 
 func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string) error {
+	var phrasesInFile []string
 	d, err := ioutil.ReadAll(rc)
 	if err != nil {
 		return err
@@ -39,9 +41,11 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 			Content: m[index].(string),
 		}
 
-		h.sPhrase.CreatePhrase(ctx, phrase)
-
+		phrasesInFile = append(phrasesInFile, fmt.Sprintf("'%s'", phrase.Key))
+		h.sPhrase.HandlePhrase(ctx, phrase)
 	}
+
+	h.sPhrase.CleanDB(ctx, phrasesInFile, fileID)
 
 	return nil
 }
