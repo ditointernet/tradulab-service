@@ -53,7 +53,6 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message, strg s
 	log.Println("file uploaded")
 
 	err = DownloadDoc(ctx, fileName.Name, strg)
-
 	if err != nil {
 		return err
 	}
