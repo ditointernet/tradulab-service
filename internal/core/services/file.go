@@ -82,13 +82,13 @@ func (f *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	return files, nil
 }
 
-func (f *File) EditFile(ctx context.Context, entry *domain.File) error {
+func (f *File) SetUploadSuccessful(ctx context.Context, entry *domain.File) error {
 	_, err := f.findFile(ctx, entry.ID)
 	if err != nil {
 		return err
 	}
 
-	err = f.repo.EditFile(ctx, entry)
+	err = f.repo.SetUploadSuccessful(ctx, entry)
 	if err != nil {
 		return err
 	}
