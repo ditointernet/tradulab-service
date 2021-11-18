@@ -35,7 +35,7 @@ func GoDotEnvVariable() (*Config, error) {
 		AllowedType:    os.Getenv("ALLOWED_TYPE"),
 		ExpirationTime: expTime,
 		Credentials:    os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"),
-		Subscription:   os.Getenv("SUBSCRIPTION"),
+		Subscription:   os.Getenv("FILE_UPLOAD_SUBSCRIPTION"),
 	}
 
 	return c, nil
