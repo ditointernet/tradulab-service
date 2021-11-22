@@ -14,22 +14,24 @@ import (
 )
 
 type Subscriber struct {
-	sFile   services.File
 	handler Handler
+	strg    storage.Storage
+	sFile   services.File
 }
 
 type FileName struct {
 	Name string
 }
 
-func MustNewSubscriber(sFile services.File, handler Handler) *Subscriber {
+func MustNewSubscriber(sFile services.File, strg storage.Storage, handler Handler) *Subscriber {
 	return &Subscriber{
 		sFile:   sFile,
+		strg:    strg,
 		handler: handler,
 	}
 }
 
-func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message, strg storage.Storage) error {
+func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error {
 	log.Println("new message received")
 	var fileName FileName
 
@@ -53,7 +55,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message, strg s
 	}
 	log.Println("file uploaded")
 
-	rc, err := DownloadDoc(ctx, fileName.Name, strg)
+	rc, err := s.DownloadDoc(ctx, fileName.Name)
 	if err != nil {
 		return err
 	}
@@ -63,8 +65,8 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message, strg s
 	return nil
 }
 
-func DownloadDoc(ctx context.Context, docName string, strg storage.Storage) (*googleStorage.Reader, error) {
-	rc, err := strg.BucketHandle.Object(docName).NewReader(ctx)
+func (s Subscriber) DownloadDoc(ctx context.Context, docName string) (*googleStorage.Reader, error) {
+	rc, err := s.strg.BucketHandle.Object(docName).NewReader(ctx)
 	if err != nil {
 		return nil, err
 	}
