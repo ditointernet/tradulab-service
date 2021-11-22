@@ -13,7 +13,7 @@ type Storage struct {
 	StorageID      string
 	expirationTime int
 	allowedType    string
-	bucketHandle   *storage.BucketHandle
+	BucketHandle   *storage.BucketHandle
 }
 
 func NewStorage(ctx context.Context, projectID, storageID string, expirationTime int, allowedType string) (Storage, error) {
@@ -35,7 +35,7 @@ func NewStorage(ctx context.Context, projectID, storageID string, expirationTime
 		StorageID:      storageID,
 		expirationTime: expirationTime,
 		allowedType:    allowedType,
-		bucketHandle:   bkt,
+		BucketHandle:   bkt,
 	}, nil
 }
 
@@ -49,7 +49,7 @@ func MustNewStorage(ctx context.Context, projectID, storageID string, expiration
 
 func (s Storage) CreateSignedURL(ctx context.Context, fileID string) (string, error) {
 	et := time.Now().Add(time.Duration(s.expirationTime))
-	u, err := s.bucketHandle.SignedURL(fileID, &storage.SignedURLOptions{
+	u, err := s.BucketHandle.SignedURL(fileID, &storage.SignedURLOptions{
 		Expires:     et,
 		ContentType: s.allowedType,
 		Method:      "PUT",
