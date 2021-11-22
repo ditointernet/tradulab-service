@@ -56,15 +56,17 @@ func (p *Phrase) CreatePhrase(ctx context.Context, phrase domain.Phrase) error {
 
 func (p *Phrase) UpdatePhrase(ctx context.Context, phrase domain.Phrase) error {
 	dto := &driven.Phrase{
+		FileID:  phrase.FileID,
 		Key:     phrase.Key,
 		Content: phrase.Content,
 	}
 
 	_, err := p.cli.ExecContext(
 		ctx,
-		"UPDATE phrases SET content = $2 WHERE key = $1",
+		"UPDATE phrases SET content = $2 WHERE key = $1 AND file_id = $3",
 		dto.Key,
 		dto.Content,
+		dto.FileID,
 	)
 
 	return err
