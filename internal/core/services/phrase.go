@@ -12,17 +12,15 @@ import (
 
 type Phrase struct {
 	repo repository.PhraseRepository
-	//storage storage.FileStorage
 }
 
 func MustNewPhrase(repo repository.PhraseRepository, storage storage.FileStorage) *Phrase {
 	return &Phrase{
 		repo: repo,
-		//storage: storage,
 	}
 }
 
-func (p *Phrase) VerifyInDB(ctx context.Context, entry *domain.Phrase) error {
+func (p *Phrase) updatePhrase(ctx context.Context, entry *domain.Phrase) error {
 	result, err := p.repo.GetPhrase(ctx, *entry)
 
 	if err == nil {
@@ -37,7 +35,7 @@ func (p *Phrase) VerifyInDB(ctx context.Context, entry *domain.Phrase) error {
 
 func (p *Phrase) HandlePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
 
-	err := p.VerifyInDB(ctx, entry)
+	err := p.updatePhrase(ctx, entry)
 
 	newPhrase := domain.Phrase{
 		FileID:  entry.FileID,
