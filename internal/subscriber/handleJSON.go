@@ -34,11 +34,11 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 		log.Fatal(err)
 	}
 
-	for index := range m {
+	for key, value := range m {
 		phrase := &domain.Phrase{
 			FileID:  fileID,
-			Key:     index,
-			Content: m[index].(string),
+			Key:     key,
+			Content: value.(string),
 		}
 
 		phrasesInFile = append(phrasesInFile, fmt.Sprintf("'%s'", phrase.Key))
