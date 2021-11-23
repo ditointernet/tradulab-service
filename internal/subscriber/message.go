@@ -70,7 +70,6 @@ func (s Subscriber) DownloadDoc(ctx context.Context, docName string) (*googleSto
 	if err != nil {
 		return nil, err
 	}
-	defer rc.Close()
 
 	return rc, nil
 }
