@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 
 	"cloud.google.com/go/storage"
@@ -41,7 +40,7 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 			Content: value,
 		}
 
-		phrasesInFile = append(phrasesInFile, fmt.Sprintf("'%s'", phrase.Key))
+		phrasesInFile = append(phrasesInFile, phrase.Key)
 		h.sPhrase.HandlePhrase(ctx, phrase)
 	}
 
