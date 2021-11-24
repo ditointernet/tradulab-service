@@ -3,9 +3,8 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
-	"log"
 
 	"cloud.google.com/go/storage"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -28,20 +27,20 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 	if err != nil {
 		return err
 	}
-	m := map[string]interface{}{}
+	m := make(map[string]string)
 	err = json.Unmarshal(d, &m)
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("fail in unmarshal or json format")
 	}
 
 	for key, value := range m {
 		phrase := &domain.Phrase{
 			FileID:  fileID,
 			Key:     key,
-			Content: value.(string),
+			Content: value,
 		}
 
-		phrasesInFile = append(phrasesInFile, fmt.Sprintf("'%s'", phrase.Key))
+		phrasesInFile = append(phrasesInFile, phrase.Key)
 		h.sPhrase.HandlePhrase(ctx, phrase)
 	}
 

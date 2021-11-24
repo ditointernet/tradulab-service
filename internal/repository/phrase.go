@@ -87,7 +87,13 @@ func (p *Phrase) GetByFileId(ctx context.Context, id string) (domain.Phrase, err
 }
 
 func (p *Phrase) DeletePhrases(ctx context.Context, phrasesKey []string, fileId string) error {
-	list := strings.Join(phrasesKey[:], ", ")
+	var phrasesFormat []string
+
+	for _, valueKey := range phrasesKey {
+		phrasesFormat = append(phrasesFormat, fmt.Sprintf("'%s'", valueKey))
+	}
+
+	list := strings.Join(phrasesFormat[:], ", ")
 
 	query := fmt.Sprintf("DELETE FROM phrases WHERE file_id = $1 AND key NOT IN (%s)", list)
 
