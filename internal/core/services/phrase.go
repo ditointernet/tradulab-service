@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/repository"
@@ -20,36 +19,17 @@ func MustNewPhrase(repo repository.PhraseRepository, storage storage.FileStorage
 	}
 }
 
-func (p *Phrase) updatePhrase(ctx context.Context, entry *domain.Phrase) error {
-	result, err := p.repo.GetPhrase(ctx, *entry)
-
-	if err == nil {
-		if result.Content != entry.Content {
-			p.repo.UpdatePhrase(ctx, *entry)
-		}
-		return nil
-	}
-
-	return err
-}
-
 func (p *Phrase) HandlePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
 
-	err := p.updatePhrase(ctx, entry)
-
 	newPhrase := domain.Phrase{
+		ID:      uuid.New().String(),
 		FileID:  entry.FileID,
 		Key:     entry.Key,
 		Content: entry.Content,
 	}
-
-	if err != nil && err == sql.ErrNoRows {
-		id := uuid.New().String()
-		newPhrase.ID = id
-		err = p.repo.CreatePhrase(ctx, newPhrase)
-		if err != nil {
-			return domain.Phrase{}, err
-		}
+	err := p.repo.CreateOrUpdatePhrase(ctx, newPhrase)
+	if err != nil {
+		return domain.Phrase{}, err
 	}
 
 	return newPhrase, nil

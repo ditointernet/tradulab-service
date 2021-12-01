@@ -13,7 +13,7 @@ type File struct {
 
 type Phrase struct {
 	ID      string `gorm:"primaryKey"`
-	FileID  string
-	Key     string
+	FileID  string `gorm:"uniqueIndex:compositeindex"`
+	Key     string `gorm:"uniqueIndex:compositeindex"`
 	Content string
 }
