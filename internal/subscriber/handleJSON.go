@@ -23,7 +23,6 @@ func MustNewHandlerJSON(sPhrase services.Phrase) *Handler {
 }
 
 func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string) error {
-	var phrasesInFile []string
 	d, err := ioutil.ReadAll(rc)
 	if err != nil {
 		return err
@@ -34,6 +33,9 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 		return errors.New("fail in unmarshal or json format")
 	}
 
+	var phrasesKeys []string
+	var allPhrases []*domain.Phrase
+
 	for key, value := range m {
 		phrase := &domain.Phrase{
 			FileID:  fileID,
@@ -41,15 +43,15 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 			Content: value,
 		}
 
-		phrasesInFile = append(phrasesInFile, phrase.Key)
-		_, err := h.sPhrase.CreateOrUpdatePhrase(ctx, phrase)
-		if err != nil {
-			log.Println(err.Error())
-			return err
-		}
+		phrasesKeys = append(phrasesKeys, phrase.Key)
+		allPhrases = append(allPhrases, phrase)
 	}
-
-	err = h.sPhrase.CleanDB(ctx, phrasesInFile, fileID)
+	err = h.sPhrase.CreateOrUpdatePhraseTx(ctx, allPhrases)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	err = h.sPhrase.CleanDB(ctx, phrasesKeys, fileID)
 	if err != nil {
 		log.Println(err.Error())
 		return err

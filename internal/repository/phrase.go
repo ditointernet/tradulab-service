@@ -8,6 +8,7 @@ import (
 
 	"github.com/ditointernet/tradulab-service/driven"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
+	"github.com/google/uuid"
 )
 
 type Phrase struct {
@@ -20,25 +21,41 @@ func MustNewPhrase(db *sql.DB) *Phrase {
 	}
 }
 
-func (p *Phrase) CreateOrUpdatePhrase(ctx context.Context, phrase domain.Phrase) error {
-	dto := &driven.Phrase{
-		ID:      phrase.ID,
-		FileID:  phrase.FileID,
-		Key:     phrase.Key,
-		Content: phrase.Content,
+func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, phrases []*domain.Phrase) error {
+	tx, err := p.cli.BeginTx(ctx, nil)
+	if err != nil {
+		return err
 	}
 
-	_, err := p.cli.ExecContext(
-		ctx,
-		`INSERT into phrases (id, file_id, key, content)
-		VALUES ($1, $2, $3, $4)
-		ON CONFLICT (key, file_id)
-		DO UPDATE SET content = $4`,
-		dto.ID,
-		dto.FileID,
-		dto.Key,
-		dto.Content,
-	)
+	for _, value := range phrases {
+		dto := &driven.Phrase{
+			ID:      uuid.New().String(),
+			FileID:  value.FileID,
+			Key:     value.Key,
+			Content: value.Content,
+		}
+
+		_, err := tx.ExecContext(
+			ctx,
+			`INSERT into phrases (id, file_id, key, content)
+			VALUES ($1, $2, $3, $4)
+			ON CONFLICT (key, file_id)
+			DO UPDATE SET content = $4`,
+			dto.ID,
+			dto.FileID,
+			dto.Key,
+			dto.Content,
+		)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
 
 	return err
 }

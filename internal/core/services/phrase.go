@@ -6,7 +6,6 @@ import (
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/repository"
 	"github.com/ditointernet/tradulab-service/internal/storage"
-	"github.com/google/uuid"
 )
 
 type Phrase struct {
@@ -19,20 +18,14 @@ func MustNewPhrase(repo repository.PhraseRepository, storage storage.FileStorage
 	}
 }
 
-func (p *Phrase) CreateOrUpdatePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
+func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, entries []*domain.Phrase) error {
 
-	newPhrase := domain.Phrase{
-		ID:      uuid.New().String(),
-		FileID:  entry.FileID,
-		Key:     entry.Key,
-		Content: entry.Content,
-	}
-	err := p.repo.CreateOrUpdatePhrase(ctx, newPhrase)
+	err := p.repo.CreateOrUpdatePhraseTx(ctx, entries)
 	if err != nil {
-		return domain.Phrase{}, err
+		return err
 	}
 
-	return newPhrase, nil
+	return nil
 }
 
 func (p *Phrase) CleanDB(ctx context.Context, phrasesKey []string, fileId string) error {
