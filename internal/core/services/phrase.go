@@ -19,7 +19,7 @@ func MustNewPhrase(repo repository.PhraseRepository, storage storage.FileStorage
 	}
 }
 
-func (p *Phrase) HandlePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
+func (p *Phrase) CreateOrUpdatePhrase(ctx context.Context, entry *domain.Phrase) (domain.Phrase, error) {
 
 	newPhrase := domain.Phrase{
 		ID:      uuid.New().String(),

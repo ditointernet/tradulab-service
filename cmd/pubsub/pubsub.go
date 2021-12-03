@@ -63,7 +63,7 @@ func main() {
 	sub := client.Subscription(cred.Subscription)
 	sub.ReceiveSettings.Synchronous = true
 	sub.ReceiveSettings.MaxOutstandingMessages = 1
-	handler := subscriber.MustNewHandler(*pService)
+	handler := subscriber.MustNewHandlerJSON(*pService)
 	message := subscriber.MustNewSubscriber(*fService, storage, *handler)
 	err = sub.Receive(ctx, func(c context.Context, m *pubsub.Message) {
 		err := message.HandleMessage(c, m)

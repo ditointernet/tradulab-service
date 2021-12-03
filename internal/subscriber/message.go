@@ -53,13 +53,17 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 		m.Nack()
 		return err
 	}
-	log.Println("file uploaded")
+	log.Printf("file uploaded: %s", file.ID)
 
 	rc, err := s.DownloadDoc(ctx, fileName.Name)
 	if err != nil {
 		return err
 	}
-	s.handler.Process(ctx, rc, file.ID)
+	err = s.handler.Process(ctx, rc, file.ID)
+	if err != nil {
+		m.Nack()
+		return err
+	}
 
 	m.Ack()
 	return nil

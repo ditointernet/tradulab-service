@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 
 	"cloud.google.com/go/storage"
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
@@ -15,7 +16,7 @@ type Handler struct {
 	sPhrase services.Phrase
 }
 
-func MustNewHandler(sPhrase services.Phrase) *Handler {
+func MustNewHandlerJSON(sPhrase services.Phrase) *Handler {
 	return &Handler{
 		sPhrase: sPhrase,
 	}
@@ -41,10 +42,18 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 		}
 
 		phrasesInFile = append(phrasesInFile, phrase.Key)
-		h.sPhrase.HandlePhrase(ctx, phrase)
+		_, err := h.sPhrase.CreateOrUpdatePhrase(ctx, phrase)
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
 	}
 
-	h.sPhrase.CleanDB(ctx, phrasesInFile, fileID)
+	err = h.sPhrase.CleanDB(ctx, phrasesInFile, fileID)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
 
 	return nil
 }
