@@ -22,9 +22,10 @@ func main() {
 		Port:     env.Port,
 	})
 
-	tables := &driven.File{}
+	tableFile := &driven.File{}
+	tablePhrase := &driven.Phrase{}
 
-	err := db.AutoMigrate(tables)
+	err := db.AutoMigrate(tableFile, tablePhrase)
 	if err != nil {
 		panic(err)
 	}
