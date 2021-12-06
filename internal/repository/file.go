@@ -37,7 +37,7 @@ func (f *File) CreateFile(ctx context.Context, file domain.File) error {
 	return err
 }
 
-func (f *File) GetFiles(ctx context.Context, projectId string) ([]domain.File, error) {
+func (f *File) GetProjectFiles(ctx context.Context, projectId string) ([]domain.File, error) {
 	var files []domain.File
 
 	allFiles, err := f.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files WHERE project_id = $1", projectId)
@@ -92,20 +92,4 @@ func (f *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error
 	)
 
 	return err
-}
-
-func (f *File) FindProject(ctx context.Context, projecId string) (string, error) {
-	var ProjectID string
-	err := f.cli.QueryRowContext(
-		ctx,
-		"SELECT project_id FROM files WHERE project_id = $1",
-		projecId).Scan(&ProjectID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return "", errors.New("file not found")
-		}
-		return "", err
-	}
-
-	return ProjectID, nil
 }

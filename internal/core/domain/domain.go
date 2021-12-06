@@ -9,8 +9,10 @@ type File struct {
 }
 
 type Phrase struct {
-	FileID string
-	Key    string
+	ID      string
+	FileID  string
+	Key     string
+	Content string
 }
 
 type Suggestion struct {
