@@ -73,8 +73,8 @@ func (f File) findFile(ctx context.Context, id string) (domain.File, error) {
 	return file, nil
 }
 
-func (f *File) GetProjectFiles(ctx context.Context, projectId string) ([]domain.File, error) {
-	files, err := f.repo.GetProjectFiles(ctx, projectId)
+func (f *File) GetFiles(ctx context.Context) ([]domain.File, error) {
+	files, err := f.repo.GetFiles(ctx)
 	if err != nil {
 		return nil, err
 	}

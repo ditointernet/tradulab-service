@@ -44,9 +44,6 @@ func main() {
 	)
 	fService := services.MustNewFile(fRepository, storage)
 
-	pRepository := repository.MustNewPhrase(sql)
-	pService := services.MustNewPhrase(pRepository, storage)
-
 	cred := &adapters.Config{
 		Credentials:  env.Credentials,
 		ProjectID:    env.ProjectID,
@@ -63,8 +60,7 @@ func main() {
 	sub := client.Subscription(cred.Subscription)
 	sub.ReceiveSettings.Synchronous = true
 	sub.ReceiveSettings.MaxOutstandingMessages = 1
-	handler := subscriber.MustNewHandlerJSON(*pService)
-	message := subscriber.MustNewSubscriber(*fService, storage, *handler)
+	message := subscriber.MustNewSubscriber(*fService, storage)
 	err = sub.Receive(ctx, func(c context.Context, m *pubsub.Message) {
 		err := message.HandleMessage(c, m)
 		if err != nil {

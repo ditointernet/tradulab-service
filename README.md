@@ -39,12 +39,10 @@
  {
     "id": "2de4496d-8b47-4624-a27f-80add458c570",
     "message": "File successfully created",
-    "url": "https://storage.googleapis.com/tradulab-files/2de4496d-8b47-4624-a27f-80add458c570.json?Expires=XXX..."
+    "url": "https://storage.googleapis.com/tradulab-files/2de4496d-8b47-4624-a27f-80add458c570.json?Expires=XXX"
   }
 ```
   Observação: A url é responsável por realizar o upload na plataforma do Google Cloud Storage, através de outra requisição.
-  
-  Através de uma requisição de PUT para `https://storage.googleapis.com/tradulab-files/2de4496d-8b47-4624-a27f-80add458c570.json?Expires=XXX...`, é possível subir o arquivo via body para a Google Cloud Storage logo após a entrada no banco de dados.
 
 ### Recuperar todos os arquivos salvos no banco de dados (GET)
   - Retorna uma lista com todos os arquivos já salvos.

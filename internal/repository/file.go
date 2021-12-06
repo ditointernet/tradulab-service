@@ -19,14 +19,14 @@ func MustNewFile(db *sql.DB) *File {
 	}
 }
 
-func (f *File) CreateFile(ctx context.Context, file domain.File) error {
+func (d *File) CreateFile(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
 		ID:        file.ID,
 		ProjectID: file.ProjectID,
 		Status:    driven.CREATED,
 	}
 
-	_, err := f.cli.ExecContext(
+	_, err := d.cli.ExecContext(
 		ctx,
 		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
 		dto.ID,
@@ -37,10 +37,10 @@ func (f *File) CreateFile(ctx context.Context, file domain.File) error {
 	return err
 }
 
-func (f *File) GetProjectFiles(ctx context.Context, projectId string) ([]domain.File, error) {
+func (d *File) GetFiles(ctx context.Context) ([]domain.File, error) {
 	var files []domain.File
 
-	allFiles, err := f.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files WHERE project_id = $1", projectId)
+	allFiles, err := d.cli.QueryContext(ctx, "SELECT id, project_id, status FROM files") // tem que arrrumar esse filePath
 	if err != nil {
 		return nil, err
 	}
@@ -60,10 +60,10 @@ func (f *File) GetProjectFiles(ctx context.Context, projectId string) ([]domain.
 	return files, nil
 }
 
-func (f *File) FindFile(ctx context.Context, id string) (domain.File, error) {
+func (d *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	var file domain.File
 
-	err := f.cli.QueryRowContext(
+	err := d.cli.QueryRowContext(
 		ctx,
 		"SELECT id, project_id, status FROM files WHERE id = $1",
 		id).Scan(&file.ID, &file.ProjectID, &file.Status)
@@ -78,13 +78,13 @@ func (f *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	return file, nil
 }
 
-func (f *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error {
+func (d *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
 		ID:     file.ID,
 		Status: driven.SUCCESS,
 	}
 
-	_, err := f.cli.ExecContext(
+	_, err := d.cli.ExecContext(
 		ctx,
 		"UPDATE files SET status = $2 WHERE id = $1",
 		dto.ID,

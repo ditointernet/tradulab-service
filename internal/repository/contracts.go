@@ -10,11 +10,5 @@ type FileRepository interface {
 	CreateFile(ctx context.Context, file domain.File) error
 	FindFile(ctx context.Context, id string) (domain.File, error)
 	SetUploadSuccessful(ctx context.Context, file *domain.File) error
-	GetProjectFiles(ctx context.Context, projectId string) ([]domain.File, error)
-}
-
-type PhraseRepository interface {
-	CreateOrUpdatePhraseTx(ctx context.Context, entries []*domain.Phrase) error
-	GetByFileId(ctx context.Context, id string) (domain.Phrase, error)
-	DeletePhrases(ctx context.Context, phrasesKey []string, projectId string) error
+	GetFiles(ctx context.Context) ([]domain.File, error)
 }

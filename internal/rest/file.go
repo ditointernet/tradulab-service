@@ -57,11 +57,8 @@ func (f File) CreateFile(ctx *gin.Context) {
 	})
 }
 
-func (f File) GetProjectFiles(ctx *gin.Context) {
-	projectId := ctx.Query("projectId")
-
-	files, err := f.in.File.GetProjectFiles(ctx, projectId)
-
+func (f File) GetAllFiles(ctx *gin.Context) {
+	files, err := f.in.File.GetFiles(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -69,16 +66,9 @@ func (f File) GetProjectFiles(ctx *gin.Context) {
 		return
 	}
 
-	if len(files) == 0 {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "no files found for this project",
-		})
-		return
-	} else {
-		ctx.JSON(http.StatusOK, gin.H{
-			"files": files,
-		})
-	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"files": files,
+	})
 }
 
 func (f File) CreateSignedURL(ctx *gin.Context) {
