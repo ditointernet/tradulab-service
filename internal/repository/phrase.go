@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -96,4 +97,22 @@ func (p *Phrase) DeletePhrases(ctx context.Context, phrasesKey []string, fileId 
 	}
 
 	return nil
+}
+
+func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error) {
+	var phrase domain.Phrase
+
+	err := p.cli.QueryRowContext(
+		ctx,
+		"SELECT id, file_id, content, key FROM phrases WHERE id = $1",
+		phraseId).Scan(&phrase.ID, &phrase.FileID, &phrase.Content, &phrase.Key)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return domain.Phrase{}, errors.New("phrase not found")
+		}
+		return domain.Phrase{}, err
+
+	}
+
+	return phrase, nil
 }

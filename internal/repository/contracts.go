@@ -17,4 +17,5 @@ type PhraseRepository interface {
 	CreateOrUpdatePhraseTx(ctx context.Context, entries []*domain.Phrase) error
 	GetByFileId(ctx context.Context, id string) (domain.Phrase, error)
 	DeletePhrases(ctx context.Context, phrasesKey []string, projectId string) error
+	GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error)
 }
