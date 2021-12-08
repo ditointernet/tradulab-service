@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/ditointernet/tradulab-service/driven"
@@ -115,4 +116,33 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 	}
 
 	return phrase, nil
+}
+
+func (p *Phrase) GetFilePhrases(ctx context.Context, fileId, page string) ([]domain.Phrase, error) {
+	limit := 100
+
+	numberPage, _ := strconv.Atoi(page)
+
+	offset := limit * (numberPage - 1)
+
+	var phrases []domain.Phrase
+
+	allPhrases, err := p.cli.QueryContext(ctx, "SELECT * FROM phrases WHERE file_id = $3 OFFSET $1 LIMIT $2", offset, limit, fileId)
+	if err != nil {
+		return nil, err
+	}
+	defer allPhrases.Close()
+
+	for allPhrases.Next() {
+		var phrase domain.Phrase
+
+		err = allPhrases.Scan(&phrase.ID, &phrase.FileID, &phrase.Key, &phrase.Content)
+		if err != nil {
+			return nil, err
+		}
+
+		phrases = append(phrases, phrase)
+	}
+
+	return phrases, nil
 }

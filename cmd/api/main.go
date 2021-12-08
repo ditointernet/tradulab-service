@@ -60,6 +60,7 @@ func main() {
 	router.GET("/files", rFile.GetProjectFiles)
 	router.POST("/files/:id/signed-url", rFile.CreateSignedURL)
 	router.GET("/phrases/:id", rPhrase.GetPhrasesById)
+	router.GET("/phrases", rPhrase.GetFilePhrases)
 
 	router.Run()
 }
