@@ -2,10 +2,12 @@ package services
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/repository"
 	"github.com/ditointernet/tradulab-service/internal/storage"
+	"github.com/pkg/errors"
 )
 
 type Phrase struct {
@@ -48,7 +50,16 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 }
 
 func (p *Phrase) GetFilePhrases(ctx context.Context, fileId, page string) ([]domain.Phrase, error) {
-	phrases, err := p.repo.GetFilePhrases(ctx, fileId, page)
+	numberPage, err := strconv.Atoi(page)
+	if err != nil {
+		return nil, err
+	}
+
+	if numberPage <= 0 {
+		return nil, errors.New("page must be bigger than zero")
+	}
+
+	phrases, err := p.repo.GetFilePhrases(ctx, fileId, numberPage)
 	if err != nil {
 		return nil, err
 	}
