@@ -39,7 +39,6 @@ func (p *Phrase) CleanDB(ctx context.Context, phrasesKey []string, fileId string
 
 func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error) {
 	phrase, err := p.repo.GetPhrasesById(ctx, phraseId)
-
 	if err != nil {
 		return domain.Phrase{}, err
 	}

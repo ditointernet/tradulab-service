@@ -112,7 +112,6 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 			return domain.Phrase{}, errors.New("phrase not found")
 		}
 		return domain.Phrase{}, err
-
 	}
 
 	return phrase, nil
