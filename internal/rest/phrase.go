@@ -41,22 +41,19 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 	page := ctx.Query("page")
 
 	phrases, err := p.pService.GetFilePhrases(ctx, fileId, page)
-
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-
 	if len(phrases) == 0 {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "no phrases found for this file in this page",
 		})
 		return
-	} else {
-		ctx.JSON(http.StatusOK, gin.H{
-			"phrases": phrases,
-		})
 	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"phrases": phrases,
+	})
 }
