@@ -17,8 +17,3 @@ type Phrase struct {
 	Key     string `gorm:"uniqueIndex:compositeindex"`
 	Content string
 }
-
-type Config struct {
-	DataBaseUrl string `cfg:"database_url" cfgRequired:"true"`
-	Page        int    `cfg:"page" cfgRequired:"true"`
-}
