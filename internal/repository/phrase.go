@@ -124,7 +124,7 @@ func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([
 
 	var phrases []domain.Phrase
 
-	allPhrases, err := p.cli.QueryContext(ctx, "SELECT id, file_id, key, content FROM phrases WHERE file_id = $3 OFFSET $1 LIMIT $2", offset, limit, fileId)
+	allPhrases, err := p.cli.QueryContext(ctx, "SELECT id, file_id, key, content FROM phrases WHERE file_id = $1 OFFSET $2 LIMIT $3", fileId, offset, limit)
 	if err != nil {
 		return nil, err
 	}
