@@ -29,10 +29,10 @@ func (p Phrase) GetPhrasesById(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"id":      phrase.ID,
-		"fileId":  phrase.FileID,
-		"key":     phrase.Key,
-		"content": phrase.Content,
+		"Id":      phrase.Id,
+		"FileId":  phrase.FileId,
+		"Key":     phrase.Key,
+		"Content": phrase.Content,
 	})
 }
 
@@ -54,6 +54,6 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"phrases": phrases,
+		"Phrases": phrases,
 	})
 }

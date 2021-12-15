@@ -50,8 +50,8 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File,
 	}
 
 	newFile := domain.File{
-		ID:        id,
-		ProjectID: entry.ProjectID,
+		Id:        id,
+		ProjectId: entry.ProjectId,
 		FilePath:  url,
 		FileName:  fileName,
 	}
@@ -83,7 +83,7 @@ func (f *File) GetProjectFiles(ctx context.Context, projectId string) ([]domain.
 }
 
 func (f *File) SetUploadSuccessful(ctx context.Context, entry *domain.File) error {
-	_, err := f.findFile(ctx, entry.ID)
+	_, err := f.findFile(ctx, entry.Id)
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func (f *File) SetUploadSuccessful(ctx context.Context, entry *domain.File) erro
 }
 
 func (f *File) CreateSignedURL(ctx context.Context, entry *domain.File) (string, error) {
-	file, err := f.findFile(ctx, entry.ID)
+	file, err := f.findFile(ctx, entry.Id)
 	if err != nil {
 		return "", err
 	}
@@ -107,7 +107,7 @@ func (f *File) CreateSignedURL(ctx context.Context, entry *domain.File) (string,
 		return "", err
 	}
 
-	fileName := fmt.Sprintf("%s%s", file.ID, extension)
+	fileName := fmt.Sprintf("%s%s", file.Id, extension)
 
 	url, err := f.storage.CreateSignedURL(ctx, fileName)
 	if err != nil {

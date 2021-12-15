@@ -1,7 +1,7 @@
 package drivers
 
 type Phrase struct {
-	ID  string
+	Id  string
 	Key string
 }
 

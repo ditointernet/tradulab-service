@@ -45,7 +45,7 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 	filename := strings.Split(fileName.Name, ".")
 
 	file := &domain.File{
-		ID: filename[0],
+		Id: filename[0],
 	}
 
 	err = s.sFile.SetUploadSuccessful(ctx, file)
@@ -53,13 +53,13 @@ func (s Subscriber) HandleMessage(ctx context.Context, m *pubsub.Message) error 
 		m.Nack()
 		return err
 	}
-	log.Printf("file uploaded: %s", file.ID)
+	log.Printf("file uploaded: %s", file.Id)
 
 	rc, err := s.DownloadDoc(ctx, fileName.Name)
 	if err != nil {
 		return err
 	}
-	err = s.handler.Process(ctx, rc, file.ID)
+	err = s.handler.Process(ctx, rc, file.Id)
 	if err != nil {
 		m.Nack()
 		return err

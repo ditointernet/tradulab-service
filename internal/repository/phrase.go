@@ -30,8 +30,8 @@ func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, phrases []*domain.P
 
 	for _, value := range phrases {
 		dto := &driven.Phrase{
-			ID:      uuid.New().String(),
-			FileID:  value.FileID,
+			Id:      uuid.New().String(),
+			FileId:  value.FileId,
 			Key:     value.Key,
 			Content: value.Content,
 		}
@@ -42,8 +42,8 @@ func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, phrases []*domain.P
 			VALUES ($1, $2, $3, $4)
 			ON CONFLICT (key, file_id)
 			DO UPDATE SET content = $4`,
-			dto.ID,
-			dto.FileID,
+			dto.Id,
+			dto.FileId,
 			dto.Key,
 			dto.Content,
 		)
@@ -105,7 +105,7 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 	err := p.cli.QueryRowContext(
 		ctx,
 		"SELECT id, file_id, content, key FROM phrases WHERE id = $1",
-		phraseId).Scan(&phrase.ID, &phrase.FileID, &phrase.Content, &phrase.Key)
+		phraseId).Scan(&phrase.Id, &phrase.FileId, &phrase.Content, &phrase.Key)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return domain.Phrase{}, errors.New("phrase not found")
@@ -133,7 +133,7 @@ func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([
 	for allPhrases.Next() {
 		var phrase domain.Phrase
 
-		err = allPhrases.Scan(&phrase.ID, &phrase.FileID, &phrase.Key, &phrase.Content)
+		err = allPhrases.Scan(&phrase.Id, &phrase.FileId, &phrase.Key, &phrase.Content)
 		if err != nil {
 			return nil, err
 		}

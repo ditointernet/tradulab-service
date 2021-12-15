@@ -1,23 +1,23 @@
 package domain
 
 type File struct {
-	ID        string
-	ProjectID string
+	Id        string
+	ProjectId string
 	FilePath  string `json:",omitempty"`
 	FileName  string `json:",omitempty"`
 	Status    string
 }
 
 type Phrase struct {
-	ID      string
-	FileID  string
+	Id      string
+	FileId  string
 	Key     string
 	Content string
 }
 
 type Suggestion struct {
-	PhraseID string
-	UserID   string
+	PhraseId string
+	UserId   string
 	Language string
 	Approved bool
 }
@@ -28,7 +28,7 @@ const UPVOTE Direction = 1
 const DOWNVOTE Direction = -1
 
 type Vote struct {
-	SuggestionID string
-	UserID       string
+	SuggestionId string
+	UserId       string
 	Direction    Direction
 }

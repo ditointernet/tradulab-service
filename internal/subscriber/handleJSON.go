@@ -38,7 +38,7 @@ func (h Handler) Process(ctx context.Context, rc *storage.Reader, fileID string)
 
 	for key, value := range m {
 		phrase := &domain.Phrase{
-			FileID:  fileID,
+			FileId:  fileID,
 			Key:     key,
 			Content: value,
 		}

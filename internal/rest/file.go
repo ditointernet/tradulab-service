@@ -38,7 +38,7 @@ func (f File) CreateFile(ctx *gin.Context) {
 	}
 
 	file := &domain.File{
-		ProjectID: body.ProjectID,
+		ProjectId: body.ProjectID,
 		FileName:  body.FileName,
 	}
 
@@ -51,9 +51,9 @@ func (f File) CreateFile(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "File successfully created",
-		"id":      newFile.ID,
-		"url":     newFile.FilePath,
+		"Message": "File successfully created",
+		"Id":      newFile.Id,
+		"Url":     newFile.FilePath,
 	})
 }
 
@@ -76,7 +76,7 @@ func (f File) GetProjectFiles(ctx *gin.Context) {
 		return
 	} else {
 		ctx.JSON(http.StatusOK, gin.H{
-			"files": files,
+			"Files": files,
 		})
 	}
 }
@@ -95,7 +95,7 @@ func (f File) CreateSignedURL(ctx *gin.Context) {
 	}
 
 	file := &domain.File{
-		ID:       id,
+		Id:       id,
 		FileName: body.FileName,
 	}
 
@@ -108,7 +108,7 @@ func (f File) CreateSignedURL(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"ID":  id,
-		"url": url,
+		"Id":  id,
+		"Url": url,
 	})
 }
