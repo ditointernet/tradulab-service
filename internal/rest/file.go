@@ -77,7 +77,7 @@ func (f File) GetProjectFiles(ctx *gin.Context) {
 	}
 
 	if len(files) == 0 {
-		ctx.JSON(http.StatusOK, gin.H{
+		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "no files found for this project",
 		})
 		return
