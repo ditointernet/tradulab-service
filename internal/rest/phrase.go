@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,22 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 	fileId := ctx.Query("fileId")
 	page := ctx.Query("page")
 
-	phrases, err := p.pService.GetFilePhrases(ctx, fileId, page)
+	numberPage, err := strconv.Atoi(page)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "Must be integer numeric value",
+		})
+		return
+	}
+
+	if numberPage <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "Must be bigger zero",
+		})
+		return
+	}
+
+	phrases, err := p.pService.GetFilePhrases(ctx, fileId, numberPage)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

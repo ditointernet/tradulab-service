@@ -118,6 +118,10 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 }
 
 func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([]domain.Phrase, error) {
+	if page <= 0 {
+		return nil, errors.New("must be bigger zero")
+	}
+
 	limit := 100
 
 	offset := limit * (page - 1)

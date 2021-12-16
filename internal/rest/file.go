@@ -42,6 +42,13 @@ func (f File) CreateFile(ctx *gin.Context) {
 		FileName:  body.FileName,
 	}
 
+	if body.ProjectID == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "project_id is require",
+		})
+		return
+	}
+
 	newFile, err := f.in.File.CreateFile(ctx, file)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
