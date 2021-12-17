@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/ditointernet/tradulab-service/driven"
@@ -122,7 +124,8 @@ func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([
 		return nil, errors.New("must be bigger zero")
 	}
 
-	limit := 100
+	limit, err := strconv.Atoi(os.Getenv("PAGINATION_LIMIT"))
+	// numberPage, err := strconv.Atoi(limit)
 
 	offset := limit * (page - 1)
 
