@@ -125,8 +125,9 @@ func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([
 	}
 
 	limit, err := strconv.Atoi(os.Getenv("PAGINATION_LIMIT"))
-	// numberPage, err := strconv.Atoi(limit)
-
+	if err != nil {
+		return nil, err
+	}
 	offset := limit * (page - 1)
 
 	var phrases []domain.Phrase
@@ -149,4 +150,18 @@ func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([
 	}
 
 	return phrases, nil
+}
+
+func (p *Phrase) CountPhrases(ctx context.Context, fileId string) (int, error) {
+	var totalPhrases int
+
+	err := p.cli.QueryRowContext(
+		ctx,
+		"SELECT COUNT (*) FROM phrases WHERE file_id = $1",
+		fileId).Scan(&totalPhrases)
+	if err != nil {
+		return 0, err
+	}
+
+	return totalPhrases, nil
 }

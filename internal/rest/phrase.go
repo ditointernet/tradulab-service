@@ -60,7 +60,7 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 		return
 	}
 
-	phrases, err := p.pService.GetFilePhrases(ctx, fileId, numberPage)
+	phrases, total, err := p.pService.GetFilePhrases(ctx, fileId, numberPage)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -73,6 +73,7 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 		})
 		return
 	}
+	ctx.Header("x-total-count", strconv.Itoa(total))
 	ctx.JSON(http.StatusOK, gin.H{
 		"Phrases": phrases,
 	})

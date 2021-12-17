@@ -15,5 +15,5 @@ type FileHandler interface {
 
 type PhraseHandler interface {
 	GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error)
-	GetFilePhrases(ctx context.Context, fileId, page string) ([]domain.Phrase, error)
+	GetFilePhrases(ctx context.Context, fileId, page string) ([]domain.Phrase, int, error)
 }
