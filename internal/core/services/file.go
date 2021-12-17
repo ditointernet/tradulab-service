@@ -41,7 +41,7 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File,
 			Id:        uuid.New().String(),
 			ProjectId: entry.ProjectId,
 		}
-		f.repo.SetStatusFailed(ctx, newFile)
+		f.repo.SetCreateFail(ctx, newFile)
 
 		return domain.File{}, errors.New("error trying to create the file, status changed to failed")
 	}
