@@ -49,6 +49,10 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 
 func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([]domain.Phrase, int, error) {
 	totalPhrases, err := p.repo.CountPhrases(ctx, fileId)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	phrases, err := p.repo.GetFilePhrases(ctx, fileId, page)
 	if err != nil {
 		return nil, 0, err
