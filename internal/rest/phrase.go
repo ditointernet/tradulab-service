@@ -43,15 +43,19 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 
 	numberPage, err := strconv.Atoi(page)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Must be integer numeric value",
-		})
-		return
+		if page == "" {
+			numberPage = 1
+		} else {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": "Page number must be integer numeric value",
+			})
+			return
+		}
 	}
 
 	if numberPage <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Must be bigger zero",
+			"error": "Must be bigger than zero",
 		})
 		return
 	}
