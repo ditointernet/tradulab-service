@@ -93,3 +93,21 @@ func (f *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error
 
 	return err
 }
+
+func (f *File) SetStatusFailed(ctx context.Context, file domain.File) error {
+	dto := &driven.File{
+		Id:        file.Id,
+		ProjectId: file.ProjectId,
+		Status:    driven.FAILED,
+	}
+
+	_, err := f.cli.ExecContext(
+		ctx,
+		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
+		dto.Id,
+		dto.ProjectId,
+		dto.Status,
+	)
+
+	return err
+}
