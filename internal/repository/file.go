@@ -94,7 +94,7 @@ func (f *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error
 	return err
 }
 
-func (f *File) SetCreateFail(ctx context.Context, file domain.File) error {
+func (f *File) SetStatusFailed(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
 		Id:        file.Id,
 		ProjectId: file.ProjectId,
