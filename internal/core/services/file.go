@@ -37,17 +37,13 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File,
 	extension := filepath.Ext(entry.FileName)
 	err := f.CheckExtension(extension)
 	if err != nil {
-		newFile := domain.File{
-			Id:        uuid.New().String(),
-			ProjectId: entry.ProjectId,
-		}
-		f.repo.SetStatusFailed(ctx, newFile)
-
-		return domain.File{}, errors.New("error trying to create the file, status changed to failed")
+		return domain.File{}, err
 	}
 
 	id := uuid.New().String()
+
 	fileName := fmt.Sprintf("%s%s", id, extension)
+
 	url, err := f.storage.CreateSignedURL(ctx, fileName)
 	if err != nil {
 		return domain.File{}, errors.Wrap(err, "couldn't create SignedURL")
@@ -59,6 +55,7 @@ func (f *File) CreateFile(ctx context.Context, entry *domain.File) (domain.File,
 		FilePath:  url,
 		FileName:  fileName,
 	}
+
 	err = f.repo.CreateFile(ctx, newFile)
 	if err != nil {
 		return domain.File{}, err

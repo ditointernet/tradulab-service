@@ -11,7 +11,6 @@ type FileRepository interface {
 	FindFile(ctx context.Context, id string) (domain.File, error)
 	SetUploadSuccessful(ctx context.Context, file *domain.File) error
 	GetProjectFiles(ctx context.Context, projectId string) ([]domain.File, error)
-	SetStatusFailed(ctx context.Context, file domain.File) error
 }
 
 type PhraseRepository interface {
