@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/gin-gonic/gin"
@@ -35,10 +36,10 @@ func (p Phrase) GetPhrasesById(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"id":      phrase.ID,
-		"fileId":  phrase.FileID,
-		"key":     phrase.Key,
-		"content": phrase.Content,
+		"Id":      phrase.Id,
+		"FileId":  phrase.FileId,
+		"Key":     phrase.Key,
+		"Content": phrase.Content,
 	})
 }
 
@@ -46,23 +47,40 @@ func (p Phrase) GetFilePhrases(ctx *gin.Context) {
 	fileId := ctx.Query("fileId")
 	page := ctx.Query("page")
 
-	phrases, err := p.pService.GetFilePhrases(ctx, fileId, page)
+	numberPage, err := strconv.Atoi(page)
+	if err != nil && page != "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "Page number must be integer numeric value",
+		})
+		return
+	}
 
+	if page == "" {
+		numberPage = 1
+	}
+
+	if numberPage <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "Must be bigger than zero",
+		})
+		return
+	}
+
+	phrases, total, err := p.pService.GetFilePhrases(ctx, fileId, numberPage)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-
 	if len(phrases) == 0 {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "no phrases found for this file in this page",
 		})
 		return
-	} else {
-		ctx.JSON(http.StatusOK, gin.H{
-			"phrases": phrases,
-		})
 	}
+	ctx.Header("x-total-count", strconv.Itoa(total))
+	ctx.JSON(http.StatusOK, gin.H{
+		"Phrases": phrases,
+	})
 }

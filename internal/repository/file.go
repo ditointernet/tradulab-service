@@ -21,16 +21,16 @@ func MustNewFile(db *sql.DB) *File {
 
 func (f *File) CreateFile(ctx context.Context, file domain.File) error {
 	dto := &driven.File{
-		ID:        file.ID,
-		ProjectID: file.ProjectID,
+		Id:        file.Id,
+		ProjectId: file.ProjectId,
 		Status:    driven.CREATED,
 	}
 
 	_, err := f.cli.ExecContext(
 		ctx,
 		"INSERT into files (id, project_id, status) values ($1, $2, $3)",
-		dto.ID,
-		dto.ProjectID,
+		dto.Id,
+		dto.ProjectId,
 		dto.Status,
 	)
 
@@ -49,7 +49,7 @@ func (f *File) GetProjectFiles(ctx context.Context, projectId string) ([]domain.
 	for allFiles.Next() {
 		var file domain.File
 
-		err = allFiles.Scan(&file.ID, &file.ProjectID, &file.Status)
+		err = allFiles.Scan(&file.Id, &file.ProjectId, &file.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -66,7 +66,7 @@ func (f *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 	err := f.cli.QueryRowContext(
 		ctx,
 		"SELECT id, project_id, status FROM files WHERE id = $1",
-		id).Scan(&file.ID, &file.ProjectID, &file.Status)
+		id).Scan(&file.Id, &file.ProjectId, &file.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return domain.File{}, errors.New("file not found")
@@ -80,14 +80,14 @@ func (f *File) FindFile(ctx context.Context, id string) (domain.File, error) {
 
 func (f *File) SetUploadSuccessful(ctx context.Context, file *domain.File) error {
 	dto := &driven.File{
-		ID:     file.ID,
+		Id:     file.Id,
 		Status: driven.SUCCESS,
 	}
 
 	_, err := f.cli.ExecContext(
 		ctx,
 		"UPDATE files SET status = $2 WHERE id = $1",
-		dto.ID,
+		dto.Id,
 		dto.Status,
 	)
 
