@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ditointernet/tradulab-service/internal/core/domain"
 	"github.com/ditointernet/tradulab-service/internal/core/services"
 	"github.com/gin-gonic/gin"
 )
@@ -23,14 +24,14 @@ func (p Phrase) GetPhrasesById(ctx *gin.Context) {
 
 	phrase, err := p.pService.GetPhrasesById(ctx, phraseId)
 	if err != nil {
-		if err.Error() == "phrase not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+	if phrase == (domain.Phrase{}) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "phrase not found",
 		})
 		return
 	}
