@@ -110,7 +110,7 @@ func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Ph
 		phraseId).Scan(&phrase.Id, &phrase.FileId, &phrase.Content, &phrase.Key)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return domain.Phrase{}, nil
+			return domain.Phrase{}, domain.NewNotFoundError("phrase not found")
 		}
 		return domain.Phrase{}, err
 	}

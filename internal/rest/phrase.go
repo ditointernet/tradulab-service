@@ -24,14 +24,14 @@ func (p Phrase) GetPhrasesById(ctx *gin.Context) {
 
 	phrase, err := p.pService.GetPhrasesById(ctx, phraseId)
 	if err != nil {
+		if _, ok := err.(*domain.NotFoundError); ok {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": "phrase not found",
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
-		})
-		return
-	}
-	if phrase == (domain.Phrase{}) {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"error": "phrase not found",
 		})
 		return
 	}
