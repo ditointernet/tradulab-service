@@ -12,3 +12,8 @@ type FileHandler interface {
 	GetProjectFiles(ctx context.Context, projectId string) ([]domain.File, error)
 	CreateSignedURL(ctx context.Context, file *domain.File) (string, error)
 }
+
+type PhraseHandler interface {
+	GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error)
+	GetFilePhrases(ctx context.Context, fileId, page string) ([]domain.Phrase, int, error)
+}

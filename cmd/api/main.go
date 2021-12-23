@@ -34,7 +34,6 @@ func main() {
 		panic(err)
 	}
 
-	fRepository := repository.MustNewFile(sql)
 	storage := storage.MustNewStorage(
 		context.Background(),
 		env.ProjectID,
@@ -42,21 +41,26 @@ func main() {
 		env.ExpirationTime,
 		env.AllowedType,
 	)
-	fService := services.MustNewFile(fRepository, storage)
+	pRepository := repository.MustNewPhrase(sql)
+	pService := services.MustNewPhrase(pRepository, storage)
 
-	router := server.Listen()
-	// rPhrase := rest.MustNewPhrase()
+	rPhrase := rest.MustNewPhrase(pService)
+	fRepository := repository.MustNewFile(sql)
+
+	fService := services.MustNewFile(fRepository, storage)
 	rFile, err := rest.NewFile(rest.ServiceInput{
 		File: fService,
 	})
 	if err != nil {
 		panic(err)
 	}
+	router := server.Listen()
 
-	// router.GET("/:id", rPhrase.FindByID)
 	router.POST("/files", rFile.CreateFile)
 	router.GET("/files", rFile.GetProjectFiles)
 	router.POST("/files/:id/signed-url", rFile.CreateSignedURL)
+	router.GET("/phrases/:id", rPhrase.GetPhrasesById)
+	router.GET("/phrases", rPhrase.GetFilePhrases)
 
 	router.Run()
 }

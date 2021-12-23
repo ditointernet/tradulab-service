@@ -19,7 +19,6 @@ func MustNewPhrase(repo repository.PhraseRepository, storage storage.FileStorage
 }
 
 func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, entries []*domain.Phrase) error {
-
 	err := p.repo.CreateOrUpdatePhraseTx(ctx, entries)
 	if err != nil {
 		return err
@@ -35,4 +34,27 @@ func (p *Phrase) CleanDB(ctx context.Context, phrasesKey []string, fileId string
 	}
 
 	return nil
+}
+
+func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error) {
+	phrase, err := p.repo.GetPhrasesById(ctx, phraseId)
+	if err != nil {
+		return domain.Phrase{}, err
+	}
+
+	return phrase, nil
+}
+
+func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([]domain.Phrase, int, error) {
+	totalPhrases, err := p.repo.CountPhrases(ctx, fileId)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	phrases, err := p.repo.GetFilePhrases(ctx, fileId, page)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return phrases, totalPhrases, nil
 }

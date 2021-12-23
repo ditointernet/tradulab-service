@@ -3,7 +3,10 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/ditointernet/tradulab-service/driven"
@@ -29,8 +32,8 @@ func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, phrases []*domain.P
 
 	for _, value := range phrases {
 		dto := &driven.Phrase{
-			ID:      uuid.New().String(),
-			FileID:  value.FileID,
+			Id:      uuid.New().String(),
+			FileId:  value.FileId,
 			Key:     value.Key,
 			Content: value.Content,
 		}
@@ -41,8 +44,8 @@ func (p *Phrase) CreateOrUpdatePhraseTx(ctx context.Context, phrases []*domain.P
 			VALUES ($1, $2, $3, $4)
 			ON CONFLICT (key, file_id)
 			DO UPDATE SET content = $4`,
-			dto.ID,
-			dto.FileID,
+			dto.Id,
+			dto.FileId,
 			dto.Key,
 			dto.Content,
 		)
@@ -96,4 +99,68 @@ func (p *Phrase) DeletePhrases(ctx context.Context, phrasesKey []string, fileId 
 	}
 
 	return nil
+}
+
+func (p *Phrase) GetPhrasesById(ctx context.Context, phraseId string) (domain.Phrase, error) {
+	var phrase domain.Phrase
+
+	err := p.cli.QueryRowContext(
+		ctx,
+		"SELECT id, file_id, content, key FROM phrases WHERE id = $1",
+		phraseId).Scan(&phrase.Id, &phrase.FileId, &phrase.Content, &phrase.Key)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return domain.Phrase{}, domain.NewNotFoundError("phrase not found")
+		}
+		return domain.Phrase{}, err
+	}
+
+	return phrase, nil
+}
+
+func (p *Phrase) GetFilePhrases(ctx context.Context, fileId string, page int) ([]domain.Phrase, error) {
+	if page <= 0 {
+		return nil, errors.New("must be bigger zero")
+	}
+
+	limit, err := strconv.Atoi(os.Getenv("PAGINATION_LIMIT"))
+	if err != nil {
+		return nil, err
+	}
+	offset := limit * (page - 1)
+
+	var phrases []domain.Phrase
+
+	allPhrases, err := p.cli.QueryContext(ctx, "SELECT id, file_id, key, content FROM phrases WHERE file_id = $1 OFFSET $2 LIMIT $3", fileId, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer allPhrases.Close()
+
+	for allPhrases.Next() {
+		var phrase domain.Phrase
+
+		err = allPhrases.Scan(&phrase.Id, &phrase.FileId, &phrase.Key, &phrase.Content)
+		if err != nil {
+			return nil, err
+		}
+
+		phrases = append(phrases, phrase)
+	}
+
+	return phrases, nil
+}
+
+func (p *Phrase) CountPhrases(ctx context.Context, fileId string) (int, error) {
+	var totalPhrases int
+
+	err := p.cli.QueryRowContext(
+		ctx,
+		"SELECT COUNT (*) FROM phrases WHERE file_id = $1",
+		fileId).Scan(&totalPhrases)
+	if err != nil {
+		return 0, err
+	}
+
+	return totalPhrases, nil
 }
